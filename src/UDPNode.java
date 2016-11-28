@@ -10,7 +10,7 @@ public class UDPNode {
     private int port = 7000; // Computer's Port
     private int robotPort = 10040; // Robot's Port
     private int timeOut = 1000; // Default 1 second
-    int MAX_BUFFER_LENGTH = 256;
+    private final int MAX_BUFFER_LENGTH = 256;
     byte[] robotCommand = new byte[MAX_BUFFER_LENGTH]; // Sending command
     byte[] receiveData = new byte[MAX_BUFFER_LENGTH]; // Received buffer package
 						      // of data
@@ -57,8 +57,7 @@ public class UDPNode {
 
     public byte[] submit() throws IOException {
 	try {
-	    DatagramSocket socket = new DatagramSocket(port); // Set // UDP
-							      // Socket.
+	    DatagramSocket socket = new DatagramSocket(port); // Set // UDP // Socket.
 	    socket.setSoTimeout(timeOut); // Millisecond
 	    DatagramPacket request = new DatagramPacket(robotCommand, robotCommand.length, robotAddress, robotPort);
 	    socket.send(request);

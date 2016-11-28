@@ -1,8 +1,9 @@
 
 public class JavaRobot extends SendUDP {
-    static Boolean initial = false;
+    Boolean initial = false;
     Boolean botReady = false;
     RobotAngle targetAngle;
+    private int[] tool = new int[8];
 
     // Constructor with no value
     public JavaRobot() {
@@ -16,16 +17,34 @@ public class JavaRobot extends SendUDP {
 	this.setReady(true);
     }
 
-    void setReady(Boolean input) {
+    private void setReady(Boolean input) {
 	this.botReady = input;
     }
-
+    //Before moveTo or move command, we have to initialize first
+    public void init(){
+	
+    }
     public void moveTo(int theta, int phi) {
+	if(initial){
+	    //We have to initialize the JavaRobot first
+	    RobotReadPosition tg;
+	}
 	this.setReady(false);
 	targetAngle.setTheta(theta); // yaw
 	targetAngle.setPhi(phi); // pitch
+	System.out.printf("Robot start moving");
+	System.out.printf("Robot is moving to yaw = ",targetAngle.getTheta()," and pitch = ",targetAngle.getPhi());
     }
-
+    
+    public class RobotReadPosition extends SendUDP{
+	
+    }
+    public void move(){
+	this.setReady(false);
+	System.out.printf("Robot start moving");
+	RobotMove robotmove = new RobotMove(targetAngle.getTheta(),targetAngle.getPhi(),);
+	System.out.printf("Robot is moving to yaw = ",targetAngle.getTheta()," and pitch = ",targetAngle.getPhi());
+    }
     public Boolean isCloseTo(RobotAngle otherAngle) {
 	return (Math.abs(otherAngle.getTheta() - targetAngle.getTheta()) < 0.01)
 		&& (Math.abs(otherAngle.getPhi() - targetAngle.getPhi()) < 0.01);
@@ -96,4 +115,6 @@ public class JavaRobot extends SendUDP {
 	    return this.robotposi;
 	}
     }
+
+
 }
