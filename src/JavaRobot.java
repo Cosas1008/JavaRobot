@@ -32,7 +32,7 @@ public class JavaRobot extends SendUDP {
 	this.setReady(false);
 	targetAngle.setTheta(theta); // yaw
 	targetAngle.setPhi(phi); // pitch
-	System.out.printf("Robot start moving");
+	System.out.println("Robot start moving");
 	System.out.printf("Robot is moving to yaw = ",targetAngle.getTheta()," and pitch = ",targetAngle.getPhi());
     }
     
@@ -41,9 +41,10 @@ public class JavaRobot extends SendUDP {
     }
     public void move(){
 	this.setReady(false);
-	System.out.printf("Robot start moving");
-	RobotMove robotmove = new RobotMove(targetAngle.getTheta(),targetAngle.getPhi(),);
-	System.out.printf("Robot is moving to yaw = ",targetAngle.getTheta()," and pitch = ",targetAngle.getPhi());
+	System.out.println("Robot start moving! ");
+	RobotMove robotmove = new RobotMove(targetAngle.getTheta(),targetAngle.getPhi(),tool);
+	System.out.printf("\nRobot is moving to yaw = %d and pitch = %d\n",targetAngle.getTheta(),targetAngle.getPhi());
+	robotmove.move();
     }
     public Boolean isCloseTo(RobotAngle otherAngle) {
 	return (Math.abs(otherAngle.getTheta() - targetAngle.getTheta()) < 0.01)

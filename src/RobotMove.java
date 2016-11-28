@@ -1,7 +1,8 @@
 import java.util.ArrayList;
 
-public class RobotMove {
+public class RobotMove extends SendUDP {
     // Parameters
+    private boolean bangular = false;
     private final int MAX_BUFFER_LENGTH = 256;
     private static int[] Head = { 89, 69, 82, 67, 32, 00, 104, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
 	    57, 57, 57 };// Header part
@@ -37,28 +38,125 @@ public class RobotMove {
 
     // constructor
     public RobotMove(int[] tool) {
-	toolNumber = tool[0];
-	typeNumber = tool[1];
-	coor = tool[2];
-	coordinate[0] = tool[3];
-	coordinate[1] = tool[4];
-	coordinate[2] = tool[5];
-	angle[0] = tool[6];
-	angle[1] = tool[7];
-	angle[2] = tool[8];
+	this.toolNumber = tool[0];
+	this.typeNumber = tool[1];
+	this.coor = tool[2];
+	this.x = tool[3];
+	this.y = tool[4];
+	this.z = tool[5];
+	this.yaw = tool[6];
+	this.pitch = tool[7];
+	this.zr = tool[8];
+	for (int i = 0; i < 3; i++) {
+	    switch (i) {
+	    case 1:
+		this.coordinate[i] = this.x;
+		this.angle[i] = yaw;
+		break;
+	    case 2:
+		this.coordinate[i] = this.y;
+		this.angle[i] = pitch;
+		break;
+	    case 3:
+		this.coordinate[i] = this.z;
+		this.angle[i] = zr;
+		break;
+	    }
+	}
+
     }
 
     public RobotMove(int theta, int phi, int[] tool) {
-	// TODO Auto-generated constructor stub
+	this.toolNumber = tool[0];
+	this.typeNumber = tool[1];
+	if(bangular){//This function is now move angular only
+	    this.x = 0;
+	    this.y = 0;
+	    this.z = 0;
+	    this.yaw = tool[5];
+	    this.pitch = tool[6];
+	    this.zr = tool[7];
+	}else{//Move rectangular only
+	    this.x = tool[2];
+	    this.y = tool[3];
+	    this.z = tool[4];
+	    this.yaw = 0;
+	    this.pitch = 0;
+	    this.zr = 0;
+	}
 	
+	
+	for (int i = 0; i < 3; i++) {
+	    switch (i) {
+	    case 1:
+		this.coordinate[i] = this.x;
+		this.angle[i] = theta;
+		break;
+	    case 2:
+		this.coordinate[i] = this.y;
+		this.angle[i] = phi;
+		break;
+	    case 3:
+		this.coordinate[i] = this.z;
+		this.angle[i] = zr;
+		break;
+	    }
+	}
     }
 
     public void move() {
-	int[] command;
-	ArrayList<Integer> arrlist = new ArrayList<Integer>(MAX_BUFFER_LENGTH);
+	int[] command = new int[] {};
+	command = generateCommand(bangular);
+	System.out.println("moving.......");
 
-	// Use add() method to add elements in the list with condition and
-	// switch cases
+	// System.out.println("ArrayLsit is : " + arrlist);//deBug ArrayList
 
     }
+
+    private int[] generateCommand(boolean arg){
+	ArrayList<Integer> arrlist = new ArrayList<Integer>(MAX_BUFFER_LENGTH);
+	
+	//Head
+	for(int i : Head){
+	    arrlist.add(i);
+	}
+	//Suh
+	for(int i : Suh){
+	    arrlist.add(i);
+	}
+	//Setting
+	if (arg){ //if True => angle
+	    for(int i : Setting_ang)
+		arrlist.add(i);
+	}else{//if False => rectangle
+	    for(int i : Setting_rect)
+		arrlist.add(i);
+	}
+	arrlist.add(coor);		//Axis
+	arrlist.add(Reserv);		//Reserve
+	arrlist.add(typeNumber);	//type
+	arrlist.add(Reserv);		//Extension1
+	arrlist.add(toolNumber);	//Tool number
+	for(int i : coordinate){	//Coordinate of rectangle
+	    arrlist.add(i);
+	}
+	for(int i : angle){		//Coordinate of angular
+	    arrlist.add(i);
+	}
+	for(int i : extension){		//Extension2
+	    arrlist.add(i);
+	}
+	System.out.println("ArrayLsit is : " + arrlist);//deBug ArrayList
+	
+	
+	//Change arraylist type to int[] type
+	int[] ints = new int[arrlist.size()];
+	for(int i=0, len = arrlist.size(); i < len; i++){
+	    ints[i] = arrlist.get(i);
+	}
+	
+	
+	return ints;
+    }
+
 }
