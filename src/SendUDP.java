@@ -3,7 +3,7 @@ public abstract class SendUDP {
     private int port = 9999;
     private int timeOut = 1000;
     private byte[] command;
-    private static int[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
+    private static byte[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
 	    57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };// Read Position
 
     // static String[] toolPosition = null;// Tool number ,Form ,X ,Y ,Z ,Xr ,Yr
@@ -24,7 +24,7 @@ public abstract class SendUDP {
     }
 
     public SendUDP() {
-	this(readInt);
+	this.command = readInt;
     }
 
     public byte[] send() throws Exception {

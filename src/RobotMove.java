@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class RobotMove extends UDPNode{
@@ -7,20 +8,11 @@ public class RobotMove extends UDPNode{
     private final int HEAD_PACKAGE_SIZE = 32;
     private static final int[] Head = { 89, 69, 82, 67, 32, 00, 104, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57,
 	    57, 57, 57, 57 };// Header part
-    private static final int[] Suh = { 138, 00, 03, 00, 01, 02, 00, 00 };// Sub-header
-    // part
+    private static final int[] Suh = { 138, 00, 03, 00, 01, 02, 00, 00 };// Sub-header part
     // Setting( Speed Coordinate)
     private int speed = 10;
-    private int[] Setting_rect = { 01, 00, 01, speed * 10, 17 };// Setting of
-								// Speed to 1
-								// mm/s and
-								// Cartesian
-								// coordinate(17)
-    private int[] Setting_ang = { 01, 00, 02, speed * 10, 19 };// Setting of
-							       // Speed to 1
-							       // degree/s and
-							       // Cartesian
-							       // coordinate(19)
+    private int[] Setting_rect = { 01, 00, 01, speed * 10, 17 };	// Setting of Speed to 1 mm/s and Cartesian coordinate(17)
+    private int[] Setting_ang = { 01, 00, 02, speed * 10, 19 };		// Setting of Speed to 1 degree/s and Cartesian coordinate(19)
     private int x = 0;
     private int y = 0;
     private int z = 0;
@@ -31,11 +23,10 @@ public class RobotMove extends UDPNode{
     private int toolNumber = 0;
     private int typeNumber = 0;
     private int coor = 1;
-    private int[] extension = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    // Axis = Tool(9:32); % X, Y, Z, TX, TY, TZ
+    private int[] extension = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; 	// Axis = Tool(9:32); % X, Y, Z, TX, TY, TZ
     private int[] coordinate = new int[3];
     private int[] angle = new int[3];
-    private byte[] comm = new byte[] {};
+    private byte[] command = new byte[] {};
 
     // constructor
     public RobotMove(int xin, int yin, int zin, int theta, int phi, int[] tool) {
@@ -65,7 +56,9 @@ public class RobotMove extends UDPNode{
 	    }
 	}
     }
-
+    private RobotMove(byte[] comm){
+	this.command = comm;
+    }
     public RobotMove(int[] tool) {
 	this.toolNumber = tool[0];
 	this.typeNumber = tool[1];
@@ -133,37 +126,66 @@ public class RobotMove extends UDPNode{
     }
 
     public void move() {
-	// Check whether there are placement first
-	// if there are changes in placement, the function will stop after
-	// change the
-	// placement rather than move angular, you would have to call the
-	// function again
-	
+	// Check whether there are placement first. If there are changes in placement, the function will stop after change the
+	// placement rather than move angular, you would have to call the function again.
+	byte[] newCommand;
 	int[] rect = { x, y, z };
-	moveRect(rect);// Move to the position first
-	movePitch(0);// Set Pitch to 0 first
-	moveYaw(yaw);// Yaw set to assigned value
-	movePitch(pitch);// Pitch set to assigned value
+	newCommand = moveRect(rect);// Move to the position first
+	RobotMove roboticrec = new RobotMove(newCommand);
+	try {
+	    roboticrec.submit();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	newCommand = movePitch(0);// Set Pitch to 0 first
+	RobotMove roboticpitchreset = new RobotMove(newCommand);
+	try {
+	    roboticpitchreset.submit();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	newCommand = moveYaw(yaw);// Yaw set to assigned value
+	RobotMove roboticyaw = new RobotMove(newCommand);
+	try {
+	    roboticyaw.submit();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
+	newCommand = movePitch(pitch);// Pitch set to assigned value
+	RobotMove roboticpitch = new RobotMove(newCommand);
+	try {
+	    roboticpitch.submit();
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     }
 
-    private void moveRect(int[] rectint) {
-	
+    private byte[] moveRect(int[] rectint) {
+	byte[] outcommand = new byte[]{};
 	bangular = false;
-	comm = generateCommand(bangular, rectint);
+	outcommand = generateCommand(bangular, rectint);
 	
-	
+	return outcommand;
     }
 
-    private void movePitch(int thetain) {
+    private byte[] movePitch(int thetain) {
+	byte[] outcommand = new byte[]{};
 	bangular = true;
 	isYaw = false;
-	comm = generateCommand(bangular, isYaw, thetain);
+	outcommand = generateCommand(bangular, isYaw, thetain);
+	return outcommand;
     }
 
-    public void moveYaw(int phiin) {
+    public byte[] moveYaw(int phiin) {
+	byte[] outcommand = new byte[]{};
 	bangular = true;
 	isYaw = true;
-	comm = generateCommand(bangular, isYaw, phiin);
+	outcommand = generateCommand(bangular, isYaw, phiin);
+	return outcommand;
     }
     //Command for moving in rectangular
     private byte[] generateCommand(boolean arg, int[] rectint) {
