@@ -10,7 +10,8 @@ public class RobotReadPosition extends SendUDP {
     public RobotReadPosition() throws Exception {
 	super(readInt);
 	RobotReadPosition r = new RobotReadPosition();
-	r.send();
+	int[] response = new int[]{};
+	response = r.sendint();
     }
 
 }

@@ -27,9 +27,18 @@ public abstract class SendUDP {
 	this(readInt);
     }
 
-    public void send() throws Exception {
+    public byte[] send() throws Exception {
 	UDPNode Command = new UDPNode(port, timeOut, command);
-	Command.submit();
+	byte[] response = new byte[]{};
+	response = Command.submit();
+	return response;
+    }
+    public int[] sendint() throws Exception {
+	UDPNode Command = new UDPNode(port, timeOut, command);
+	byte[] response = new byte[]{};
+	response = Command.submit();
+	int[] responseint = byteArrayToInt(response);
+	return responseint;
     }
 
     public int[] byteArrayToInt(byte[] b) {
