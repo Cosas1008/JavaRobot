@@ -6,7 +6,6 @@ public class JavaRobot extends SendUDP {
     RobotPosition targetPosition;
     
     private int[] tool = new int[8];
-
     // Constructor with no value
     public JavaRobot() {
 	this.targetAngle = new RobotAngle(0, 0);
@@ -24,7 +23,11 @@ public class JavaRobot extends SendUDP {
     }
     //Before moveTo or move command, we have to initialize first
     public void init(){
-	
+	tool[2] = 10;
+	tool[3] = 23;
+	tool[4] = 12;
+	tool[5] = 3;
+	tool[6] = 32;
     }
     public void moveTo(int theta, int phi) {
 	if(initial){
@@ -37,12 +40,14 @@ public class JavaRobot extends SendUDP {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
+	}else{
+	    this.setReady(false);
+	    targetAngle.setTheta(theta); // yaw
+	    targetAngle.setPhi(phi); // pitch
+	    System.out.println("Robot start moving");
+	    System.out.printf("Robot is moving to yaw = ",targetAngle.getTheta()," and pitch = ",targetAngle.getPhi());
 	}
-	this.setReady(false);
-	targetAngle.setTheta(theta); // yaw
-	targetAngle.setPhi(phi); // pitch
-	System.out.println("Robot start moving");
-	System.out.printf("Robot is moving to yaw = ",targetAngle.getTheta()," and pitch = ",targetAngle.getPhi());
+	
     }
     
     public void move(){

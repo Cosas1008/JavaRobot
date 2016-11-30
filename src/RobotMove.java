@@ -27,7 +27,7 @@ public class RobotMove extends UDPNode{
     private int[] coordinate = new int[3];
     private int[] angle = new int[3];
     private byte[] command = new byte[] {};
-
+    private int[] tool = new int[8]; 
     // constructor
     public RobotMove(int xin, int yin, int zin, int theta, int phi, int[] tool) {
 	this.toolNumber = tool[0];
@@ -56,9 +56,11 @@ public class RobotMove extends UDPNode{
 	    }
 	}
     }
+    
     private RobotMove(byte[] comm){
 	this.command = comm;
     }
+    
     public RobotMove(int[] tool) {
 	this.toolNumber = tool[0];
 	this.typeNumber = tool[1];
@@ -89,37 +91,28 @@ public class RobotMove extends UDPNode{
     }
 
     public RobotMove(int theta, int phi, int[] tool) {
+	this.tool = tool;
 	this.toolNumber = tool[0];
 	this.typeNumber = tool[1];
-	if (bangular) {// This function is now move angular only
-	    this.x = 0;
-	    this.y = 0;
-	    this.z = 0;
-	    this.yaw = tool[5];
-	    this.pitch = tool[6];
-	    this.zr = tool[7];
-	} else {// Move rectangular only
-	    this.x = tool[2];
-	    this.y = tool[3];
-	    this.z = tool[4];
-	    this.yaw = 0;
-	    this.pitch = 0;
-	    this.zr = 0;
-	}
-
+	this.x = tool[2];
+	this.y = tool[3];
+	this.z = tool[4];
+	this.yaw = theta;
+	this.pitch = phi;
+	this.zr = tool[7];
 	for (int i = 0; i < 3; i++) {
 	    switch (i) {
-	    case 1:
+	    case 0:
 		this.coordinate[i] = this.x;
-		this.angle[i] = theta;
+		this.angle[i] = this.yaw;
+		break;
+	    case 1:
+		this.coordinate[i] = this.y;
+		this.angle[i] = this.pitch;
 		break;
 	    case 2:
-		this.coordinate[i] = this.y;
-		this.angle[i] = phi;
-		break;
-	    case 3:
 		this.coordinate[i] = this.z;
-		this.angle[i] = zr;
+		this.angle[i] = this.zr;
 		break;
 	    }
 	}
@@ -128,6 +121,13 @@ public class RobotMove extends UDPNode{
     public void move() {
 	// Check whether there are placement first. If there are changes in placement, the function will stop after change the
 	// placement rather than move angular, you would have to call the function again.
+	System.out.printf("Coordinate is  X : %d  Y : %d  Z : %d Tz : %d Ty : %d Tz : %d \n\n", this.coordinate[0], this.coordinate[1], this.coordinate[2], this.angle[0], this.angle[1], this.angle[2]);
+	//To tell whether to move coordinate
+	if(this.x == this.tool[2] && this.y == this.tool[3] && this.z == this.tool[z]){
+	    //Move angular only
+	    this.bangular = true;	//set the bangular to true to indicate this command is for angular move
+	}
+	
 	byte[] newCommand;
 	int[] rect = { x, y, z };
 	newCommand = moveRect(rect);// Move to the position first
