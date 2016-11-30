@@ -1,3 +1,4 @@
+import java.net.SocketTimeoutException;
 
 public abstract class SendUDP {
     private int port = 9999;
@@ -30,24 +31,40 @@ public abstract class SendUDP {
     public byte[] send() throws Exception {
 	UDPNode Command = new UDPNode(port, timeOut, command);
 	byte[] response = new byte[]{};
-	response = Command.submit();
-	return response;
+	try{
+	    response = Command.submit();
+	    return response;
+	}catch(SocketTimeoutException e){
+	    System.out.println("Cannot get response");
+	    return null;
+	}
+	
     }
     public int[] sendint() throws Exception {
 	UDPNode Command = new UDPNode(port, timeOut, command);
 	byte[] response = new byte[]{};
-	response = Command.submit();
-	int[] responseint = byteArrayToInt(response);
-	return responseint;
+	try{
+	    response = Command.submit();
+	      
+	}catch(SocketTimeoutException e){
+	    System.out.println("Cannot get response");
+	    return null;
+	}
+	return  byteArrayToInt(response);  
     }
 
     public int[] byteArrayToInt(byte[] b) {
+	if(b != null){
 	int[] transfered = new int[(b.length) / 4];
 	for (int j = 0; j < (b.length / 4); j++) {
 	    transfered[j] = b[(j * 4) + 3] & 0xFF | (b[(j * 4) + 2] & 0xFF) << 8 | (b[(j * 4) + 1] & 0xFF) << 16
 		    | (b[(j * 4) + 0] & 0xFF) << 24;
+	    
 	}
-	return transfered;
+	return transfered;}
+	else{
+	    return null;
+	}
     }
 
     public byte[] InttoByteArray(int[] inputIntArray) {

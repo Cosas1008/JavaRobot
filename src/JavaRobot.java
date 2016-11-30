@@ -50,7 +50,7 @@ public class JavaRobot extends SendUDP {
 	
     }
     
-    public void move(){
+    public void move() throws Exception{
 	this.setReady(false);
 	System.out.println("Robot start moving! ");
 	RobotMove robotmove = new RobotMove(targetAngle.getTheta(),targetAngle.getPhi(),tool);

@@ -1,9 +1,10 @@
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class RobotMove extends UDPNode{
+public class RobotMove extends SendUDP{
     // Parameters
     private boolean bangular = false;
+    private boolean bmoveRect = false;
     private boolean isYaw = false;
     private final int HEAD_PACKAGE_SIZE = 32;
     private static final int[] Head = { 89, 69, 82, 67, 32, 00, 104, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57,
@@ -57,7 +58,8 @@ public class RobotMove extends UDPNode{
 	}
     }
     
-    private RobotMove(byte[] comm){
+    public RobotMove(byte[] comm){
+	super(comm);
 	this.command = comm;
     }
     
@@ -118,22 +120,22 @@ public class RobotMove extends UDPNode{
 	}
     }
 
-    public void move() {
+    public void move() throws Exception {
 	// Check whether there are placement first. If there are changes in placement, the function will stop after change the
 	// placement rather than move angular, you would have to call the function again.
 	System.out.printf("Coordinate is  X : %d  Y : %d  Z : %d Tz : %d Ty : %d Tz : %d \n\n", this.coordinate[0], this.coordinate[1], this.coordinate[2], this.angle[0], this.angle[1], this.angle[2]);
 	//To tell whether to move coordinate
 	if(this.x == this.tool[2] && this.y == this.tool[3] && this.z == this.tool[z]){
 	    //Move angular only
-	    this.bangular = true;	//set the bangular to true to indicate this command is for angular move
+	    this.bmoveRect = true;	//set the bangular to true to indicate this command is for angular move
 	}
 	
-	byte[] newCommand;
+	byte[] newCommand = new byte[]{};
 	int[] rect = { x, y, z };
 	newCommand = moveRect(rect);// Move to the position first
 	RobotMove roboticrec = new RobotMove(newCommand);
 	try {
-	    roboticrec.submit();
+	    roboticrec.sendint();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -141,7 +143,7 @@ public class RobotMove extends UDPNode{
 	newCommand = movePitch(0);// Set Pitch to 0 first
 	RobotMove roboticpitchreset = new RobotMove(newCommand);
 	try {
-	    roboticpitchreset.submit();
+	    roboticpitchreset.sendint();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -149,7 +151,7 @@ public class RobotMove extends UDPNode{
 	newCommand = moveYaw(yaw);// Yaw set to assigned value
 	RobotMove roboticyaw = new RobotMove(newCommand);
 	try {
-	    roboticyaw.submit();
+	    roboticyaw.sendint();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -157,7 +159,7 @@ public class RobotMove extends UDPNode{
 	newCommand = movePitch(pitch);// Pitch set to assigned value
 	RobotMove roboticpitch = new RobotMove(newCommand);
 	try {
-	    roboticpitch.submit();
+	    roboticpitch.sendint();
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -167,6 +169,7 @@ public class RobotMove extends UDPNode{
     private byte[] moveRect(int[] rectint) {
 	byte[] outcommand = new byte[]{};
 	bangular = false;
+	isYaw = false;
 	outcommand = generateCommand(bangular, rectint);
 	
 	return outcommand;
