@@ -16,12 +16,13 @@ public class RobotReadPosition extends SendUDP {
 		super(readInt);
 		RobotReadPosition r = new RobotReadPosition();
 		this.response = r.sendint();
+		r.run();
     }
 
-    private static void main(String[] args){
+    private void run(){
     	//The response store data form we have to modified to tool
     	for(int i :response){
-
+    	    tool[i] = response[i];
     	}
     }
 
