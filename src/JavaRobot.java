@@ -1,6 +1,6 @@
 
 public class JavaRobot extends SendUDP {
-    Boolean initial = false;
+    Boolean botinitial = false;
     Boolean botReady = false;
     RobotAngle targetAngle;
     RobotPosition targetPosition;
@@ -8,18 +8,30 @@ public class JavaRobot extends SendUDP {
     private int[] tool = new int[8];
     // Constructor with no value
     public JavaRobot() {
+	this.setInitial(false);
 	this.targetAngle = new RobotAngle(0, 0);
 	this.setReady(true);
     }
 
     // Constructor with theta and phi
     public JavaRobot(int theta_in, int phi_in) {
+	this.setInitial(false);
 	this.targetAngle = new RobotAngle(theta_in, phi_in);
 	this.setReady(true);
     }
 
     private void setReady(Boolean input) {
 	this.botReady = input;
+    }
+    //initialize boolean function
+    private void setInitial(Boolean input){
+	this.botinitial = input;
+    }
+    private boolean getReady(){
+	return botReady;
+    }
+    private boolean getInitial(){
+	return botinitial;
     }
     //Before moveTo or move command, we have to initialize first
     public void init(){
@@ -30,10 +42,9 @@ public class JavaRobot extends SendUDP {
 	tool[6] = 32;
     }
     public void moveTo(int theta, int phi) {
-	if(initial){
+	if(!(botinitial)){
 	    //We have to initialize the JavaRobot first
-	    
-	    RobotReadPosition tg = null;
+	    RobotReadPosition tg = new RobotReadPosition();
 	    try {
 		this.tool = tg.sendint();
 	    } catch (Exception e) {
@@ -49,7 +60,10 @@ public class JavaRobot extends SendUDP {
 	}
 	
     }
-    
+    public void test(){
+	RobotReadPosition robotread = new RobotReadPosition();
+	robotread.read();
+    }
     public void move() throws Exception{
 	this.setReady(false);
 	System.out.println("Robot start moving! ");

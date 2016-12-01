@@ -11,7 +11,7 @@ public class JavaRobotExample {
 	int pitch = 23;
 	JavaRobot robot = new JavaRobot(yaw, pitch);
 	System.out.println("You have set the robot angle to (yaw, pitch) = ( " + yaw + " , " + pitch + " )");
-	robot.move();
+	robot.test();
 	//sc.close();
     }
 }

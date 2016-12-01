@@ -7,9 +7,9 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 public class UDPNode {
-    String host = "192.168.1.127"; // Robot IPAddress
-    private int port = 7000; // Computer's Port
-    private int robotPort = 10040; // Robot's Port
+    String host = "127.0.0.1"; // Robot IPAddress
+    private int port = 7001; // Computer's Port
+    private int robotPort = 7000; // Robot's Port
     private int timeOut = 1000; // Default 1 second
     private final int MAX_BUFFER_LENGTH = 256;
     private byte[] robotCommand = new byte[MAX_BUFFER_LENGTH]; // Sending command
@@ -73,6 +73,7 @@ public class UDPNode {
         	    try{
         		socket.receive(response);
         		this.flag = true;
+        		break;
         	    }catch (SocketTimeoutException e) {
         		socket.send(request); //resend
         		System.out.println("Resending the" +count +"-th time");
@@ -92,7 +93,7 @@ public class UDPNode {
 		    // response.getOffset(), response.getLength());
 		    // debug part
 		    int num = ByteBuffer.wrap(response.getData()).getInt();
-		    System.out.println("The response integral is: " + num + "has the length " + response.getLength());
+		    System.out.println("The response integral is: " + num + " , and it has the length of " + response.getLength());
 		    byteData = response.getData();
 		    socket.close();
 	    }

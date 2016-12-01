@@ -10,20 +10,23 @@
 public class RobotReadPosition extends SendUDP {
     private static int[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
 	    57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };
-	    private int[] response = new int[]{};
-	    private int[] tool = new int[8];
-    public RobotReadPosition() throws Exception {
-		super(readInt);
-		RobotReadPosition r = new RobotReadPosition();
-		this.response = r.sendint();
-		r.run();
+    private int[] response = new int[] {};
+    private int[] tool = new int[8];
+
+    public RobotReadPosition() {
+	super(readInt);
     }
 
-    private void run(){
-    	//The response store data form we have to modified to tool
-    	for(int i :response){
-    	    tool[i] = response[i];
-    	}
+    public int[] read() throws NullPointerException {
+	System.out.println("Called");
+	RobotReadPosition robotread = new RobotReadPosition();
+	try {
+	    this.response = robotread.sendint();
+	} catch (Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	    this.response = null;
+	}
+	return response;
     }
-
 }

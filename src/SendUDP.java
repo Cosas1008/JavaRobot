@@ -1,7 +1,7 @@
 import java.net.SocketTimeoutException;
 
 public abstract class SendUDP {
-    private int port = 9999;
+    private int port = 7000;
     private int timeOut = 1000;
     private byte[] command;
     private static byte[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
