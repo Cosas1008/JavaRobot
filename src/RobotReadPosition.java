@@ -7,10 +7,10 @@
  * This function is used only for initialize the tool variable
  * That is, we will assign the "integer array" named "tool" for the later on work
  */
-public class RobotReadPosition extends SendUDP {
+public class RobotReadPosition extends SendUDP{
     private static int[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
 	    57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };
-    private int[] response = new int[] {};
+    private int[] response = new int[]{};
     private int[] tool = new int[8];
 
     public RobotReadPosition() {
@@ -22,11 +22,15 @@ public class RobotReadPosition extends SendUDP {
 	RobotReadPosition robotread = new RobotReadPosition();
 	try {
 	    this.response = robotread.sendint();
+	    for(int i : response){
+		tool[i] = response[i];
+	    }
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
-	    this.response = null;
+	    this.tool = null;
 	}
-	return response;
+	return tool;
     }
+
 }
