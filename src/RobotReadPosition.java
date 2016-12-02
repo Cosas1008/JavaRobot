@@ -17,19 +17,20 @@ public class RobotReadPosition extends SendUDP{
 	super(readInt);
     }
 
-    public int[] read() throws NullPointerException {
+    public int[] read(){
 	System.out.println("Called");
 	RobotReadPosition robotread = new RobotReadPosition();
 	try {
 	    this.response = robotread.sendint();
-	    for(int i : response){
-		tool[i] = response[i];
-	    }
-	} catch (Exception e) {
+	    System.out.println("respnse = " + this.response.toString());
+	} catch (NullPointerException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	    this.tool = null;
-	}
+	} catch (Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} 
 	return tool;
     }
 

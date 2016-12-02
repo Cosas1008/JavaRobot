@@ -1,9 +1,10 @@
 import java.net.SocketTimeoutException;
 
 public abstract class SendUDP {
-    private int port = 7000;
+    private int port = 12345;
     private int timeOut = 1000;
-    private byte[] command;
+    private final int MAX_BUFFER_LENGTH = 256;
+    private byte[] command = new byte[MAX_BUFFER_LENGTH];
     private static byte[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
 	    57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };// Read Position
 
@@ -20,8 +21,10 @@ public abstract class SendUDP {
     }
 
     public SendUDP(int[] IntCommand) {
+	System.out.println("BBBBB : "+ IntCommand.toString());
 	byte[] byteComm = InttoByteArray(IntCommand);
 	this.command = byteComm;
+	System.out.println("CCCC "+this.command.toString());
     }
 
     public SendUDP() {
@@ -29,6 +32,7 @@ public abstract class SendUDP {
     }
 
     public byte[] send() throws Exception {
+	System.out.println("DDDDD : " + command);
 	UDPNode Command = new UDPNode(port, timeOut, command);
 	byte[] response = new byte[]{};
 	try{
@@ -41,6 +45,7 @@ public abstract class SendUDP {
 	
     }
     public int[] sendint() throws Exception {
+	System.out.println("DDDDD : " + command);
 	UDPNode Command = new UDPNode(port, timeOut, command);
 	byte[] response = new byte[]{};
 	try{

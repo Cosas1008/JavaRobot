@@ -53,7 +53,7 @@ public class JavaRobot extends SendUDP {
 	    this.setReady(false);
 	    RobotReadPosition tg = new RobotReadPosition();
 	    try {
-		this.tool = tg.read();
+		this.intTool = tg.read();
 		System.out.println("Move to tool point.");
 	    } catch (Exception e) {
 		// TODO Auto-generated catch block
@@ -78,7 +78,7 @@ public class JavaRobot extends SendUDP {
     public void move() throws Exception {
 	this.setReady(false);
 	System.out.println("Robot start moving! ");
-	RobotMove robotmove = new RobotMove(targetAngle.getTheta(), targetAngle.getPhi(), tool);
+	RobotMove robotmove = new RobotMove(targetAngle.getTheta(), targetAngle.getPhi(), intTool);
 	System.out.printf("\nRobot is moving to yaw = %d and pitch = %d\n", targetAngle.getTheta(),
 		targetAngle.getPhi());
 	robotmove.move();
