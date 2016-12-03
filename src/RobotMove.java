@@ -329,7 +329,7 @@ public class RobotMove extends SendUDP{
 	}
 	return ret;
     }
-*/
+
     public byte[] InttoByteArray(int[] inputIntArray) {
 	byte[] transfered = new byte[(inputIntArray.length * 4)];
 	for (int j = 0; j < inputIntArray.length; j++) {
@@ -340,4 +340,5 @@ public class RobotMove extends SendUDP{
 	}
 	return transfered;
     }
+*/
 }

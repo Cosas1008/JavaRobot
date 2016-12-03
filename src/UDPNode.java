@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 public class UDPNode {
-    String host = "192.168.11.5"; // Robot IPAddress
+    String host = "192.168.1.146"; // Robot IPAddress
     private int port = 10032; // Computer's Port
     private int robotPort = 12345; // Robot's Port
     private int timeOut = 1000; // Default 1 second
@@ -58,20 +58,27 @@ public class UDPNode {
     public byte[] submit() throws IOException {
 	int count = 0;
 	try {
-	    DatagramSocket socket = new DatagramSocket(); // Set // UDP // Socket.
+	    DatagramSocket socket = new DatagramSocket(port); // Set // UDP // Socket.
 	    socket.setSoTimeout(timeOut); // Millisecond
-	    //DatagramPacket request = new DatagramPacket(robotCommand, robotCommand.length, robotAddress, robotPort);
-	    InetAddress addr = InetAddress.getByName("192.168.11.5");
-	    DatagramPacket request = new DatagramPacket(new byte[]{22,31 ,33 }, 3, addr, 12345);
+	    System.out.printf("The command is : ");
+	    for (int i=0; i < robotCommand.length; i++)
+	        {
+		if(i%4==0){
+		    System.out.printf(" ");
+    		}else{
+    	            System.out.printf("" + robotCommand[i]);
+    		}
+	        }
+	    DatagramPacket request = new DatagramPacket(this.robotCommand, this.robotCommand.length, robotAddress, robotPort);
 	    socket.send(request);
 	    System.out.println("From Local IP address is : " + InetAddress.getLocalHost().getHostAddress());
-	    System.out.println("Local Port is :  @" + socket.getLocalPort());
+	    System.out.println("Local Port is :  " + socket.getLocalPort());
 	    System.out.println("Set Timeout : " + socket.getSoTimeout());
 	    String command = new String(request.getData());
 	    System.out.println("Send command : " + command);
 	    DatagramPacket response = new DatagramPacket(receiveData, receiveData.length);
 	    byte[] byteData = new byte[MAX_BUFFER_LENGTH];
-	    while(count <= 3){
+	    while(count <= 1){
         	    try{
         		socket.receive(response);
         		this.flag = true;

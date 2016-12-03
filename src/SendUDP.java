@@ -1,4 +1,6 @@
 import java.net.SocketTimeoutException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 public abstract class SendUDP {
     private int port = 12345;
@@ -21,10 +23,14 @@ public abstract class SendUDP {
     }
 
     public SendUDP(int[] IntCommand) {
-	System.out.println("BBBBB : "+ IntCommand.toString());
-	byte[] byteComm = InttoByteArray(IntCommand);
+	byte[] byteComm = null;
+	try {
+	    byteComm = InttoByteArray(IntCommand);
+	} catch (Exception e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
 	this.command = byteComm;
-	System.out.println("CCCC "+this.command.toString());
     }
 
     public SendUDP() {
@@ -32,7 +38,6 @@ public abstract class SendUDP {
     }
 
     public byte[] send() throws Exception {
-	System.out.println("DDDDD : " + command);
 	UDPNode Command = new UDPNode(port, timeOut, command);
 	byte[] response = new byte[]{};
 	try{
@@ -71,7 +76,7 @@ public abstract class SendUDP {
 	    return null;
 	}
     }
-
+/*
     public byte[] InttoByteArray(int[] inputIntArray) {
 	byte[] transfered = new byte[(inputIntArray.length * 4)];
 	for (int j = 0; j < inputIntArray.length; j++) {
@@ -81,5 +86,26 @@ public abstract class SendUDP {
 	    transfered[(j * 4) + 3] = (byte) (inputIntArray[j] >> 24);
 	}
 	return transfered;
+    }
+    */
+    public byte[] InttoByteArray(int[] inputIntArray) throws Exception {
+	boolean isEmpty = true;
+	byte[] transfered = new byte[(inputIntArray.length * 4)];
+	
+	ByteBuffer byteBuffer = ByteBuffer.allocate(inputIntArray.length *4);
+	IntBuffer intBuffer = byteBuffer.asIntBuffer();
+	intBuffer.put(inputIntArray);
+	transfered = byteBuffer.array();
+	
+	for (byte b : transfered) {
+	    if (b != 0) {
+	        isEmpty = false;
+	    }
+	}
+	if(isEmpty){
+	    return new byte[]{(byte) 99,(byte) 99,(byte) 99};
+	}else{
+	    return transfered;
+	}
     }
 }

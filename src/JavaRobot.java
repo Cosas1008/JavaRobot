@@ -3,6 +3,7 @@ public class JavaRobot extends SendUDP {
     private Boolean botinitial = false;
     private Boolean botReady = false;
     private RobotAngle targetAngle = new RobotAngle();
+    private RobotAngle otherAngle = new RobotAngle();
     private RobotPosition targetPosition = new RobotPosition();
     private Tool tool = new Tool();
     private int[] intTool = new int[8];
