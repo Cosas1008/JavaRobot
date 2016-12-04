@@ -3,10 +3,10 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public abstract class SendUDP {
-    private int port = 12345;
-    private int timeOut = 1000;
     private final int MAX_BUFFER_LENGTH = 256;
     private byte[] command = new byte[MAX_BUFFER_LENGTH];
+    private int port;
+    private int timeOut;
     private static byte[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
 	    57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };// Read Position
 
@@ -38,7 +38,7 @@ public abstract class SendUDP {
     }
 
     public byte[] send() throws Exception {
-	UDPNode Command = new UDPNode(port, timeOut, command);
+	UDPNode Command = new UDPNode(command);
 	byte[] response = new byte[]{};
 	try{
 	    response = Command.submit();
@@ -50,8 +50,7 @@ public abstract class SendUDP {
 	
     }
     public int[] sendint() throws Exception {
-	System.out.println("DDDDD : " + command);
-	UDPNode Command = new UDPNode(port, timeOut, command);
+	UDPNode Command = new UDPNode(command);
 	byte[] response = new byte[]{};
 	try{
 	    response = Command.submit();
@@ -108,4 +107,5 @@ public abstract class SendUDP {
 	    return transfered;
 	}
     }
+    
 }
