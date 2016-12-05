@@ -3,29 +3,25 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 public abstract class SendUDP {
-    private final int MAX_BUFFER_LENGTH = 256;
-    private byte[] command = new byte[MAX_BUFFER_LENGTH];
-    private int port;
-    private int timeOut;
+    private final int MAX_BUFFER_LENGTH = 256;//Not using now
+    private byte[] command = new byte[]{};
     private static byte[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
 	    57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };// Read Position
-
-    // static String[] toolPosition = null;// Tool number ,Form ,X ,Y ,Z ,Xr ,Yr
-    // ,Zr
-    public SendUDP(int iport, int itimeOut, byte[] robotCommand) {
-	this.port = iport;
-	this.timeOut = itimeOut;
+    private static byte[] readPositionCommand = {};
+    
+    // Constructor
+    public SendUDP(){
+	
+    }
+    
+    public SendUDP( byte[] robotCommand) {
 	this.command = robotCommand;
     }
-
-    public SendUDP(byte[] byteCommand) {
-	this(9999, 1000, byteCommand);
-    }
-
+    
     public SendUDP(int[] IntCommand) {
 	byte[] byteComm = null;
 	try {
-	    byteComm = InttoByteArray(IntCommand);
+	    byteComm = InttoByteArray(IntCommand);//Change Int32 form to byte form
 	} catch (Exception e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
@@ -33,8 +29,18 @@ public abstract class SendUDP {
 	this.command = byteComm;
     }
 
-    public SendUDP() {
-	this.command = readInt;
+    public SendUDP(int index) {
+	switch (index) {
+	case 1:
+	    this.command = readPositionCommand;
+	    System.out.println("Read Position command set!");
+	    break;
+	default:
+	    this.command = readInt;
+	    System.out.println("Read Position command set!");
+	    break;
+	}
+	    
     }
 
     public byte[] send() throws Exception {
@@ -75,18 +81,6 @@ public abstract class SendUDP {
 	    return null;
 	}
     }
-/*
-    public byte[] InttoByteArray(int[] inputIntArray) {
-	byte[] transfered = new byte[(inputIntArray.length * 4)];
-	for (int j = 0; j < inputIntArray.length; j++) {
-	    transfered[(j * 4)] = (byte) (inputIntArray[j] >> 24);
-	    transfered[(j * 4) + 1] = (byte) (inputIntArray[j] >> 24);
-	    transfered[(j * 4) + 2] = (byte) (inputIntArray[j] >> 24);
-	    transfered[(j * 4) + 3] = (byte) (inputIntArray[j] >> 24);
-	}
-	return transfered;
-    }
-    */
     public byte[] InttoByteArray(int[] inputIntArray) throws Exception {
 	boolean isEmpty = true;
 	byte[] transfered = new byte[(inputIntArray.length * 4)];
@@ -99,13 +93,78 @@ public abstract class SendUDP {
 	for (byte b : transfered) {
 	    if (b != 0) {
 	        isEmpty = false;
+	        break;
 	    }
 	}
 	if(isEmpty){
-	    return new byte[]{(byte) 99,(byte) 99,(byte) 99};
+	    return null;
 	}else{
 	    return transfered;
 	}
     }
     
+    public static byte[] swap(byte[] ibytes) {
+	byte[] obytes = new byte[ibytes.length];
+	for (int i = 0; i < ibytes.length; i++) {
+	    if ((i + 1) % 4 == 0 && i != 0) {
+		byte[] first = { ibytes[i - 3], ibytes[i - 2] };
+		byte[] second = { ibytes[i - 1], ibytes[i] };
+		obytes[i - 3] = second[1];
+		obytes[i - 2] = second[0];
+		obytes[i - 1] = first[1];
+		obytes[i] = first[0];
+		System.out.println("OBYTES" + i + " : " + obytes[i - 3] + " " + obytes[i - 2] + " " + obytes[i - 1]
+			+ " " + obytes[i]);
+	    }
+	}
+
+	return obytes;
+    }
+    public static byte[] hexStringToByteArray(String s) {
+	int len = s.length();
+	byte[] data = new byte[len / 2];
+	for (int i = 0; i < len; i += 2) {
+	    data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
+	}
+	return data;
+    }
+
+    public static int[] byteToint32(byte[] inputByteArray) {
+	int[] x = new int[(inputByteArray.length) / 4];
+	// System.out.println(x);
+	for (int i = 1; i < (inputByteArray.length); i = i + 4) {
+	    int offSet = (i - 1);
+	    int length = 4;
+	    int a = Math.floorDiv(i, 4);
+	    // public static ByteBuffer wrap(byte[] array, int offset, int
+	    // length) Wraps a byte array into a buffer.
+	    x[a] = java.nio.ByteBuffer.wrap(inputByteArray, offSet, length).getInt();
+	}
+	return x;
+    }
+    public static int[] stringTointArray(String[] commandByt) {
+	
+	byte[] commandbyteArray = new byte[commandByt.length];
+	for (int i = 0; i < commandByt.length; i++) {
+	    byte[] e = hexStringToByteArray(commandByt[i]);
+	    commandbyteArray[i] = e[0];
+	}
+	byte[] changedCommandbyteArray = swap(commandbyteArray);
+	/*Debug purpose
+	Byte[] commandByteArray = byteString.toObjects(changedCommandbyteArray);
+	List<Byte> byteList2 = Arrays.asList(commandByteArray);
+	System.out.println(byteList2);
+	//another swap function : Collections.reverse(byteList2);
+	System.out.println(Arrays.toString(commandByteArray));
+	 * 
+	 */
+	// byte[] into int32
+	int[] haha = byteToint32(changedCommandbyteArray);
+	for (int i : haha) {
+	    System.out.println(i);
+	}
+	return haha;
+    }
+
+
 }

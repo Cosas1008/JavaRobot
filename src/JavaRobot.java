@@ -2,11 +2,12 @@
 public class JavaRobot extends SendUDP {
     private Boolean botinitial = false;
     private Boolean botReady = false;
-    private RobotAngle targetAngle = new RobotAngle();
-    private RobotAngle otherAngle = new RobotAngle();
-    private RobotPosition targetPosition = new RobotPosition();
+    private RobotAngle targetAngle;
+    private RobotAngle otherAngle;
+    private RobotPosition targetPosition;
     private Tool tool = new Tool();
     private int[] intTool = new int[8];
+
     // Constructor with no value
     public JavaRobot() {
 	this.setInitial(false);
@@ -85,6 +86,24 @@ public class JavaRobot extends SendUDP {
 	robotmove.move();
     }
 
+    public Tool Read() {
+	Tool toolout = new Tool();	//To store the outcome of Tool
+	RobotReadPosition robotread = new RobotReadPosition();
+	return tool;
+
+    }
+    public Boolean alarm(int index){
+	return botReady;
+	
+    }
+    public Boolean servo(int index){
+	return botReady;
+	
+    }
+    public Boolean hold(int index){
+	return botReady;
+	
+    }
     public Boolean isCloseTo(RobotAngle otherAngle) {
 	return (Math.abs(otherAngle.getTheta() - targetAngle.getTheta()) < 0.01)
 		&& (Math.abs(otherAngle.getPhi() - targetAngle.getPhi()) < 0.01);
@@ -129,6 +148,7 @@ public class JavaRobot extends SendUDP {
 	    this.tY = 9999;
 	    this.tZ = 9999;
 	}
+
 	public void setting(int inputTool, int inputForm) {
 	    this.toolnumber = inputTool;
 	    this.formnumber = inputForm;
