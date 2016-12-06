@@ -11,7 +11,6 @@ public abstract class SendUDP {
     
     // Constructor
     public SendUDP(){
-	
     }
     
     public SendUDP( byte[] robotCommand) {
@@ -103,7 +102,7 @@ public abstract class SendUDP {
 	}
     }
     
-    public static byte[] swap(byte[] ibytes) {
+    public byte[] swap(byte[] ibytes) {
 	byte[] obytes = new byte[ibytes.length];
 	for (int i = 0; i < ibytes.length; i++) {
 	    if ((i + 1) % 4 == 0 && i != 0) {
@@ -120,7 +119,7 @@ public abstract class SendUDP {
 
 	return obytes;
     }
-    public static byte[] hexStringToByteArray(String s) {
+    public byte[] hexStringToByteArray(String s) {
 	int len = s.length();
 	byte[] data = new byte[len / 2];
 	for (int i = 0; i < len; i += 2) {
@@ -129,7 +128,7 @@ public abstract class SendUDP {
 	return data;
     }
 
-    public static int[] byteToint32(byte[] inputByteArray) {
+    public int[] byteToint32(byte[] inputByteArray) {
 	int[] x = new int[(inputByteArray.length) / 4];
 	// System.out.println(x);
 	for (int i = 1; i < (inputByteArray.length); i = i + 4) {
@@ -142,7 +141,7 @@ public abstract class SendUDP {
 	}
 	return x;
     }
-    public static int[] stringTointArray(String[] commandByt) {
+    public int[] stringTointArray(String[] commandByt) {
 	
 	byte[] commandbyteArray = new byte[commandByt.length];
 	for (int i = 0; i < commandByt.length; i++) {

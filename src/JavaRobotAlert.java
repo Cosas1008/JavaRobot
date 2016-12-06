@@ -6,9 +6,24 @@ public class JavaRobotAlert extends SendUDP {
 	    57, 57, 57, -126, 0, 1, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
     private Boolean alert = new Boolean(false);
 
-    public JavaRobotAlert() {
-	// TODO Auto-generated constructor stub
+    // private constructor JavaRobotAlert Read
+    private JavaRobotAlert() {
+	super(commandAlertRead);
+    }
 
+    private JavaRobotAlert(int i) {
+	super(commandAlertReset);
+    }
+
+    public static JavaRobotAlert makeAlert(int index){
+	switch(index){
+	case 1://read alert
+	    return new JavaRobotAlert();
+	case 2://reset alert
+	    return new JavaRobotAlert(1);
+	default://reset alert
+	    return new JavaRobotAlert(1);
+	}
     }
 
     public Boolean call() {
