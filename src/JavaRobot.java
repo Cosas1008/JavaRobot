@@ -53,7 +53,7 @@ public class JavaRobot extends SendUDP {
 	if (!(botinitial)) {
 	    // We have to initialize the JavaRobot first
 	    this.setReady(false);
-	    RobotReadPosition tg = new RobotReadPosition();
+	    	RobotReadPosition tg = new RobotReadPosition();
 	    try {
 		this.intTool = tg.read();
 		System.out.println("Move to tool point.");
@@ -80,7 +80,8 @@ public class JavaRobot extends SendUDP {
     public void move() throws Exception {
 	this.setReady(false);
 	System.out.println("Robot start moving! ");
-	RobotMove robotmove = new RobotMove(targetAngle.getTheta(), targetAngle.getPhi(), intTool);
+	int speed = 10;
+	RobotMove robotmove = new RobotMove(targetAngle.getTheta(), targetAngle.getPhi(), intTool,speed);
 	System.out.printf("\nRobot is moving to yaw = %d and pitch = %d\n", targetAngle.getTheta(),
 		targetAngle.getPhi());
 	robotmove.move();
@@ -137,7 +138,6 @@ public class JavaRobot extends SendUDP {
 	}
 
 	public Tool() {
-	    // TODO Auto-generated constructor stub
 	    // Initialize Tool with certain value
 	    this.toolnumber = 0;
 	    this.formnumber = 1;
@@ -217,7 +217,6 @@ public class JavaRobot extends SendUDP {
 	}
 
 	public RobotAngle() {
-	    // TODO Auto-generated constructor stub
 	    // Initialize the RobotAngle with (0,0)
 	    this.theta = 0;
 	    this.phi = 0;
@@ -257,7 +256,6 @@ public class JavaRobot extends SendUDP {
 	}
 
 	public RobotPosition() {
-	    // TODO Auto-generated constructor stub
 	    this.X = 0;
 	    this.Y = 0;
 	    this.Z = 0;

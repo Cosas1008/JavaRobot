@@ -4,7 +4,7 @@ public class JavaRobotAlert extends SendUDP {
 	    57, 57, 57, 112, 0, 1, 0, 0, 1, 0, 0 };
     private static byte[] commandAlertReset = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
 	    57, 57, 57, -126, 0, 1, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
-    private Boolean alert = new Boolean(false);
+    private String alert = new String();
 
     // private constructor JavaRobotAlert Read
     private JavaRobotAlert() {
@@ -26,8 +26,8 @@ public class JavaRobotAlert extends SendUDP {
 	}
     }
 
-    public Boolean call() {
-	alert = false;
+    public String call() {
+	alert = "";
 	return alert;
     }
 
