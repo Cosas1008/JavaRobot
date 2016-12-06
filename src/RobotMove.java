@@ -60,15 +60,9 @@ public class RobotMove extends SendUDP {
 		break;
 	    }
 	}
-	this.speed = speedin;
-	this.speedbyte = InttoByteArrayS(speed);
-	this.toolNumberbyte =InttoByteArrayS(toolNumber);
-	this.typeNumberbyte =InttoByteArrayS(typeNumber);
-	this.coordinatebyte =IntArraytoByteArray(coordinate);
-	this.anglebyte = IntArraytoByteArray(angle);
-	this.coorbyte = IntArraytoByteArray(coor); 
-    }
-
+	initialize(speedin);
+	}
+    
     // constructor of simply move to tool
     public RobotMove(int[] tool,int speedin) {
 	// Basic setting
@@ -92,13 +86,7 @@ public class RobotMove extends SendUDP {
 		break;
 	    }
 	}
-	this.speed = speedin;
-	this.speedbyte = InttoByteArrayS(speed);
-	this.toolNumberbyte =InttoByteArrayS(toolNumber);
-	this.typeNumberbyte =InttoByteArrayS(typeNumber);
-	this.coordinatebyte =IntArraytoByteArray(coordinate);
-	this.anglebyte = IntArraytoByteArray(angle);
-	this.coorbyte = IntArraytoByteArray(coor);
+	initialize(speedin);
     }
 
     // constructor of simply move theta and phi
@@ -128,33 +116,27 @@ public class RobotMove extends SendUDP {
 		break;
 	    }
 	}
-	this.speed = speedin;
-	this.speedbyte = InttoByteArrayS(speed);
-	this.toolNumberbyte =InttoByteArrayS(toolNumber);
-	this.typeNumberbyte =InttoByteArrayS(typeNumber);
-	this.coordinatebyte =IntArraytoByteArray(coordinate);
-	this.anglebyte = IntArraytoByteArray(angle);
-	this.coorbyte = IntArraytoByteArray(coor);
+	initialize(speedin);
     }
 
     // inner constructor to send command
     private RobotMove(byte[] generatedCommand) {
-	this.newCommand = generatedCommand;
+    	this.newCommand = generatedCommand;
     }
 
     // methods to get coordinate
     public int[] getCoordinate() {
-	return this.coordinate;
+    	return this.coordinate;
     }
 
     // methods to get angle
     public int[] getAngle() {
-	return this.angle;
+    	return this.angle;
     }
 
     // method to get Tool
     public int[] getTool() {
-	return this.tool;
+    	return this.tool;
     }
 
     // move function(main function)
@@ -260,46 +242,56 @@ public class RobotMove extends SendUDP {
 	}
     }
     
-    private static byte[] InttoByteArrayS(int inputIntArray) {
-	boolean isEmpty = true;
-	byte[] transfered = new byte[4];
-	
-	ByteBuffer byteBuffer = ByteBuffer.allocate(4);
-	IntBuffer intBuffer = byteBuffer.asIntBuffer();
-	intBuffer.put(inputIntArray);
-	transfered = byteBuffer.array();
-	
-	for (byte b : transfered) {
-	    if (b != 0) {
-	        isEmpty = false;
-	        break;
-	    }
+	private static byte[] InttoByteArrayS(int inputIntArray) {
+		boolean isEmpty = true;
+		byte[] transfered = new byte[4];
+
+		ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+		IntBuffer intBuffer = byteBuffer.asIntBuffer();
+		intBuffer.put(inputIntArray);
+		transfered = byteBuffer.array();
+
+		for (byte b : transfered) {
+			if (b != 0) {
+				isEmpty = false;
+				break;
+			}
+		}
+		if (isEmpty) {
+			return null;
+		} else {
+			return transfered;
+		}
 	}
-	if(isEmpty){
-	    return null;
-	}else{
-	    return transfered;
+
+	public static byte[] IntArraytoByteArray(int[] inputIntArray) {
+		boolean isEmpty = true;
+		byte[] transfered = new byte[(inputIntArray.length * 4)];
+
+		ByteBuffer byteBuffer = ByteBuffer.allocate(inputIntArray.length * 4);
+		IntBuffer intBuffer = byteBuffer.asIntBuffer();
+		intBuffer.put(inputIntArray);
+		transfered = byteBuffer.array();
+
+		for (byte b : transfered) {
+			if (b != 0) {
+				isEmpty = false;
+				break;
+			}
+		}
+		if (isEmpty) {
+			return null;
+		} else {
+			return transfered;
+		}
 	}
-    }
-    public static byte[] IntArraytoByteArray(int[] inputIntArray){
-	boolean isEmpty = true;
-	byte[] transfered = new byte[(inputIntArray.length * 4)];
-	
-	ByteBuffer byteBuffer = ByteBuffer.allocate(inputIntArray.length *4);
-	IntBuffer intBuffer = byteBuffer.asIntBuffer();
-	intBuffer.put(inputIntArray);
-	transfered = byteBuffer.array();
-	
-	for (byte b : transfered) {
-	    if (b != 0) {
-	        isEmpty = false;
-	        break;
-	    }
-	}
-	if(isEmpty){
-	    return null;
-	}else{
-	    return transfered;
-	}
+    private void initialize(int speedin){
+    	this.speed = speedin;
+    	this.speedbyte = InttoByteArrayS(speed);
+    	this.toolNumberbyte =InttoByteArrayS(toolNumber);
+    	this.typeNumberbyte =InttoByteArrayS(typeNumber);
+    	this.coordinatebyte =IntArraytoByteArray(coordinate);
+    	this.anglebyte = IntArraytoByteArray(angle);
+    	this.coorbyte = IntArraytoByteArray(coor); 
     }
 }

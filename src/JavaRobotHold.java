@@ -1,12 +1,27 @@
 
 public class JavaRobotHold extends SendUDP {
-    private static byte[] commandHoldOn = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57, 57,
-	    57, 57, -125, 0, 1, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
-    private static byte[] commandHoldOff = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
-	    57, 57, 57, -125, 0, 1, 0, 1, 16, 0, 0, 2, 0, 0, 0 };
-    private Boolean status = new Boolean(false);
-    public JavaRobotHold() {
-	// TODO Auto-generated constructor stub
-    }
+    
+	private Boolean status = new Boolean(false);
+	//Constructor for JavaRobotHold
+	public JavaRobotHold(int i) {
+		super((i+5));// Hold 6: ON / 7: OFF
+	}
 
+	public Boolean makeHold(int index) {
+		int[] response = null;
+		JavaRobotHold js = new JavaRobotHold(index);
+		try {
+			response = js.sendint();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if(response[6] == 0){
+			status = true;
+		}else{
+			status = false;
+		}
+		
+		return status;
+	}
+	
 }

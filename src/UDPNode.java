@@ -102,7 +102,7 @@ public class UDPNode {
 		}
 	    }
 	    if (!(flag)) {
-		System.out.println("Robot doesn't response");
+		System.out.println("Robot doesn't response\n");
 		socket.close();
 		byteData = null;
 	    } else {
