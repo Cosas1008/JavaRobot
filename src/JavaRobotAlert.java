@@ -14,10 +14,14 @@ public class JavaRobotAlert extends SendUDP {
 		JavaRobotAlert js = new JavaRobotAlert(index);
 		try {
 			response = js.send();
+			if(response.length ==1){
+			    System.out.println("Robot Hold cannot get response!"+"\nYou should check your connection with robot or contact the mechanics or YW Chen.\n\n");
+			    return null;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(response[6] == 0){
+		if(response[9] == 0){
 			alert = null;
 		}else{
 			try {
