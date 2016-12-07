@@ -4,7 +4,6 @@ public class JavaRobot extends SendUDP {
     private Boolean botReady = false;
     private RobotAngle targetAngle;
     private RobotAngle otherAngle;
-    private RobotPosition targetPosition;
     private Tool tool = new Tool();
     private int[] intTool = new int[8];
 
@@ -58,7 +57,6 @@ public class JavaRobot extends SendUDP {
 		this.intTool = tg.read();
 		System.out.println("Move to tool point.");
 	    } catch (Exception e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
 	} else {
@@ -284,7 +282,7 @@ public class JavaRobot extends SendUDP {
 
 	public static Boolean Servo(int i) {
 		JavaRobotServo serbo = new JavaRobotServo(i);// 1 : Servo ON / 2: Servo OFF
-		Boolean sevo = serbo.makeServo(1);
+		Boolean sevo = serbo.makeServo(i);
 		if(sevo && i ==1){
 			System.out.println("Servo Start!");
 		}else if(!(sevo) && i ==2){

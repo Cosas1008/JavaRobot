@@ -7,14 +7,13 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 public class UDPNode {
-    String host = "192.168.1.134"; // Robot IPAddress
+    String host = "192.168.2.250"; // Robot IPAddress
     private int port = 10041; // Computer's Port
     private int robotPort = 10040; // Robot's Port
     private int timeOut = 1000; // Default 1 second
-    private final int MAX_BUFFER_LENGTH = 256;
-    private byte[] robotCommand = new byte[MAX_BUFFER_LENGTH]; // Sending
+    private byte[] robotCommand = new byte[]{}; // Sending
 							       // command
-    private byte[] receiveData = new byte[MAX_BUFFER_LENGTH]; // Received buffer
+    private byte[] receiveData = new byte[256]; // Received buffer
 							      // package of data
     private boolean flag = false;
     InetAddress robotAddress;
@@ -83,10 +82,11 @@ public class UDPNode {
 	    socket.send(request);
 	    String command = new String(request.getData(), "UTF-8");
 	    System.out.println("Send command : " + command);
-	    System.out.println("Client is listening :" + request.getAddress() + " @" + request.getPort());
+	    System.out.println("Robot is listening :" + request.getAddress() + " @" + request.getPort());
+	    System.out.println("  Sending the command for the 1-th time.");
 	    DatagramPacket response = new DatagramPacket(receiveData, receiveData.length, request.getAddress(),
 		    request.getPort());
-	    byte[] byteData = new byte[MAX_BUFFER_LENGTH];
+	    byte[] byteData = new byte[]{};
 	    while (count < 1) {
 		try {
 		    socket.receive(response);
@@ -97,23 +97,20 @@ public class UDPNode {
 		    }
 		} catch (SocketTimeoutException e) {
 		    socket.send(request); // resend
-		    System.out.println("Resending the" + count + "-th time");
+		    System.out.println("Resending the command for the " + (count+2) + "-th time.");
 		    count++;
 		}
 	    }
 	    if (!(flag)) {
 		System.out.println("Robot doesn't response\n");
 		socket.close();
-		byteData = null;
+		byteData = new byte[]{0,0,0,0};
 	    } else {
 		// debug part
 		// System.out.println("");
 		// String message = new String(response.getData(),
 		// response.getOffset(), response.getLength());
 		// debug part
-		int num = ByteBuffer.wrap(response.getData()).getInt();
-		System.out.println(
-			"The response integral is: " + num + " , and it has the length of " + response.getLength());
 		byteData = response.getData();
 		socket.close();
 	    }
