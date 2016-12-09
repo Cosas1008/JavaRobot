@@ -195,7 +195,7 @@ public class JavaRobot extends SendUDP {
 	}
 
     // Inner class of Robot Position contains X, Y and Z
-	class RobotPosition {
+	public class RobotPosition {
 		private int X;
 		private int Y;
 		private int Z;

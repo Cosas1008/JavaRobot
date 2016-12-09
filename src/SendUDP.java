@@ -125,7 +125,7 @@ public abstract class SendUDP {
 	}
     }
 
-    public byte[] InttoByteArray(int[] inputIntArray) throws Exception {
+    public byte[] InttoByteArray(int[] inputIntArray){
 	boolean isEmpty = true;
 	byte[] transfered = new byte[(inputIntArray.length * 4)];
 

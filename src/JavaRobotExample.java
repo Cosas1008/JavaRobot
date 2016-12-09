@@ -14,7 +14,8 @@ public class JavaRobotExample {
 		//JavaRobot robot = new JavaRobot(yaw, pitch);
 		//System.out.println("You have set the robot angle to (yaw, pitch) = ( " + yaw + " , " + pitch + " )");
 		flag = JavaRobot.Servo(2);	//Hold ON
-		System.out.println("Hold : " + flag.toString());
-		
+		//System.out.println("Hold : " + flag.toString());
+		RobotReadPosition rp = new RobotReadPosition();
+		rp.read();
 	}
 }
