@@ -3,7 +3,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
-public class RobotMove extends SendUDP {
+public class RobotMove extends SendUDP implements RobotTool, RobotAngle, RobotPosition{
 
     private boolean isYaw = false;
     private static final byte[] head = { 89, 69, 82, 67, 32, 00, 104, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57, 57, 57, 57 };// Header part
@@ -149,6 +149,19 @@ public class RobotMove extends SendUDP {
     public int[] getTool() {
     	return this.tool;
     }
+    public Boolean isDone(){
+    	Boolean outBoolean = new Boolean(false);
+    	RobotMove robot = new RobotMove(newCommand);
+    	try {
+    		robot.sendint();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return outBoolean;
+    }
 
     // move function(main function)
 	public void move() throws Exception {
@@ -158,38 +171,20 @@ public class RobotMove extends SendUDP {
 		// function again.
 		System.out.printf("Coordinate is  X : %d  Y : %d  Z : %d Tz : %d Ty : %d Tz : %d \n\n", this.coordinate[0],
 				this.coordinate[1], this.coordinate[2], this.angle[0], this.angle[1], this.angle[2]);
-		int[] result = new int[] {};
 		// To tell whether to move coordinate and move robot to the place first
 		if (this.x == this.tool[2] && this.y == this.tool[3] && this.z == this.tool[z]) {
-			// whether to move to the position
-			moveRect();// Move to the position first
-			RobotMove roboticrec = new RobotMove(newCommand);
-			try {
-				result = roboticrec.sendint();
-			} catch (IOException e) {
-				e.printStackTrace();
+			while(!(isDone())){
+				moveRect();// Move to the position first
 			}
 		} else {
-			movePitch(0);// Set Pitch to 0 first
-			RobotMove roboticpitchreset = new RobotMove(newCommand);
-			try {
-				result = roboticpitchreset.sendint();
-			} catch (IOException e) {
-				e.printStackTrace();
+			while(!(isDone())){
+				movePitch(0);						// Set Pitch to 0 first
 			}
-			moveYaw(yaw);// Yaw set to assigned value
-			RobotMove roboticyaw = new RobotMove(newCommand);
-			try {
-				result = roboticyaw.sendint();
-			} catch (IOException e) {
-				e.printStackTrace();
+			while(!(isDone())){
+				moveYaw(this.angle[0]);				// Yaw set to assigned value
 			}
-			movePitch(pitch);// Pitch set to assigned value
-			RobotMove roboticpitch = new RobotMove(newCommand);
-			try {
-				result = roboticpitch.sendint();
-			} catch (IOException e) {
-				e.printStackTrace();
+			while(!(isDone())){
+				movePitch(this.angle[1]);			// Pitch set to assigned value
 			}
 		}
 
@@ -312,4 +307,64 @@ public class RobotMove extends SendUDP {
     	this.anglebyte = InttoByteArray(angle);
     	this.coorbyte = InttoByteArray(coor); 
     }
+
+	@Override
+	public int getX() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getY() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getZ() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setZ(int input) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setY(int input) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setX(int input) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getTheta() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getPhi() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setTheta(int input) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPhi(int input) {
+		// TODO Auto-generated method stub
+		
+	}
 }

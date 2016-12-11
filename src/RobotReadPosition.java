@@ -30,7 +30,8 @@ public class RobotReadPosition extends SendUDP {
 				System.out.println("respnse = " + response.toString());
 				//System.out.println("Return has length " + response.length);
 				for (int i = 0; i < response.length; i++) {
-					this.tool[i] = response[i];
+					System.out.println(response[i]);
+					this.tool[i] = response[i+7];
 				}
 				this.read = true;
 				// deal with response with SendUDP's public funuction to

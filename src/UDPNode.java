@@ -7,7 +7,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 public class UDPNode {
-    String host = "192.168.2.250"; // Robot IPAddress
+    String host = "192.168.0.106"; // Robot IPAddress
     private int port = 10041; // Computer's Port
     private int robotPort = 10040; // Robot's Port
     private int timeOut = 1000; // Default 1 second
@@ -78,11 +78,13 @@ public class UDPNode {
 			String command = new String(request.getData(), "UTF-8");
 			//System.out.println("Send command : " + command);
 			//System.out.println("Robot is listening :" + request.getAddress() + " @" + request.getPort());
-			System.out.println("  Sending the command for the 1-th time.");
+			
 			DatagramPacket response = new DatagramPacket(receiveData, receiveData.length, request.getAddress(),
 					request.getPort());
 			byte[] byteData = new byte[] {};
 			while (count < 1) {
+				if(count == 0)
+					System.out.println("  Sending the command for the 1-th time.");
 				try {
 					socket.receive(response);
 					if (response != null) {
@@ -92,7 +94,7 @@ public class UDPNode {
 					}
 				} catch (SocketTimeoutException e) {
 					socket.send(request); // resend
-					System.out.println("Didn't get the response. \n\n Resending the command for the " + (count + 2) + "-th time.");
+					System.out.println("Didn't get the response.\nResending the command for the " + (count + 2) + "-th time.");
 					count++;
 				}
 			}

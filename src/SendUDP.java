@@ -157,8 +157,7 @@ public abstract class SendUDP {
 		obytes[i - 2] = second[0];
 		obytes[i - 1] = first[1];
 		obytes[i] = first[0];
-		System.out.println("OBYTES" + i + " : " + obytes[i - 3] + " " + obytes[i - 2] + " " + obytes[i - 1]
-			+ " " + obytes[i]);
+		//System.out.println("OBYTES" + i + " : " + obytes[i - 3] + " " + obytes[i - 2] + " " + obytes[i - 1]+ " " + obytes[i]);
 	    }
 	}
 
