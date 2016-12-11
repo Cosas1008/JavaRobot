@@ -13,8 +13,11 @@ public class JavaRobotExample {
 		//int pitch = 23;
 		//JavaRobot robot = new JavaRobot(yaw, pitch);
 		//System.out.println("You have set the robot angle to (yaw, pitch) = ( " + yaw + " , " + pitch + " )");
-		flag = JavaRobot.Servo(2);	//Hold ON
-		System.out.println("Hold : " + flag.toString());
+		//flag = JavaRobot.Servo(2);	//Hold ON
+		//System.out.println("Hold : " + flag.toString());
+		RobotReadPosition read = new RobotReadPosition();
+		int[] tool = read.read();
+		System.out.println("X is "+ tool[8]);
 		
 	}
 }
