@@ -2,23 +2,24 @@ import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-public abstract class SendUDP {
-    private byte[] command = new byte[]{};
-    private static byte[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57, 57,
-	    57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };// Read Position
+public abstract class SendUDP extends Thread{
+    private byte[] command = new byte[] {};
+    private static byte[] readInt = { 89, 69, 82, 67, 32, 00, 00, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57, 57,
+	    57, 57, 57, 57, 117, 00, 101, 00, 00, 01, 00, 00 };// Read Position
     private static byte[] readPositionCommand = {};
-	private static byte[] commandAlertRead = { 89, 69, 82, 67, 32, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
-			57, 57, 57, 112, 0, 1, 0, 0, 1, 0, 0 };
-	private static byte[] commandAlertReset = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
-			57, 57, 57, -126, 0, 1, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
-	private byte[] commandServoOn = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57, 57, 57,
-			57, -125, 0, 2, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
-	private byte[] commandServoOFF = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57, 57, 57,
-			57, -125, 0, 2, 0, 1, 16, 0, 0, 2, 0, 0, 0 };
-	private static byte[] commandHoldOn = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57, 57,
-			57, 57, -125, 0, 1, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
-	private static byte[] commandHoldOff = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
-			57, 57, 57, -125, 0, 1, 0, 1, 16, 0, 0, 2, 0, 0, 0 };
+    private static byte[] commandAlertRead = { 89, 69, 82, 67, 32, 0, 0, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
+	    57, 57, 57, 112, 0, 1, 0, 0, 1, 0, 0 };
+    private static byte[] commandAlertReset = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
+	    57, 57, 57, -126, 0, 1, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
+    private byte[] commandServoOn = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57, 57, 57,
+	    57, -125, 0, 2, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
+    private byte[] commandServoOFF = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57, 57, 57,
+	    57, -125, 0, 2, 0, 1, 16, 0, 0, 2, 0, 0, 0 };
+    private static byte[] commandHoldOn = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57, 57,
+	    57, 57, -125, 0, 1, 0, 1, 16, 0, 0, 1, 0, 0, 0 };
+    private static byte[] commandHoldOff = { 89, 69, 82, 67, 32, 0, 4, 0, 3, 1, 0, 0, 0, 0, 0, 0, 57, 57, 57, 57, 57,
+	    57, 57, 57, -125, 0, 1, 0, 1, 16, 0, 0, 2, 0, 0, 0 };
+
     // Constructor
     public SendUDP() {
     }
@@ -84,12 +85,15 @@ public abstract class SendUDP {
 	    response = Command.submit();
 	    if (byteArrayToInt(response)[0] == 0) {
 		System.out.println("Cannot get response");
+		Thread.sleep(10);
 		return new byte[] { 0 };
 	    } else {
+		Thread.sleep(10);
 		return swap(response);
 	    }
 	} catch (SocketTimeoutException e) {
 	    System.out.println("Cannot get response");
+	    Thread.sleep(10);
 	    return new byte[] { 0 };
 	}
     }
@@ -101,12 +105,15 @@ public abstract class SendUDP {
 	    response = Command.submit();
 	    if (byteArrayToInt(response)[0] == 0) {
 		System.out.println("Cannot get response");
+		Thread.sleep(10);
 		return new int[] { 0 };
 	    } else {
-		return byteToint32(swap(response));
+		Thread.sleep(10);
+		return byteToint32(response);
 	    }
 	} catch (SocketTimeoutException e) {
 	    System.out.println("Cannot get response");
+	    Thread.sleep(10);
 	    return new int[] { 0 };
 	}
     }
@@ -125,7 +132,7 @@ public abstract class SendUDP {
 	}
     }
 
-    public byte[] InttoByteArray(int[] inputIntArray){
+    public byte[] InttoByteArray(int[] inputIntArray) {
 	boolean isEmpty = true;
 	byte[] transfered = new byte[(inputIntArray.length * 4)];
 
@@ -157,7 +164,10 @@ public abstract class SendUDP {
 		obytes[i - 2] = second[0];
 		obytes[i - 1] = first[1];
 		obytes[i] = first[0];
-		//System.out.println("OBYTES" + i + " : " + obytes[i - 3] + " " + obytes[i - 2] + " " + obytes[i - 1]+ " " + obytes[i]);
+		// System.out.println("IBYTES" + i + " : " + ibytes[i - 3] + " "
+		// + ibytes[i - 2] + " " + ibytes[i - 1]+ " " + ibytes[i]);
+		// System.out.println("OBYTES" + i + " : " + obytes[i - 3] + " "
+		// + obytes[i - 2] + " " + obytes[i - 1]+ " " + obytes[i]);
 	    }
 	}
 

@@ -4,6 +4,10 @@ public class JavaRobotServo extends SendUDP {
     private Boolean status = new Boolean(false);
 
     // Constructor for JavaRobotServo
+    public JavaRobotServo() {
+
+    }
+
     public JavaRobotServo(int i) {
 	super((i + 3));// Servo 4: ON / 5: OFF
     }
@@ -14,7 +18,8 @@ public class JavaRobotServo extends SendUDP {
 	try {
 	    response = js.sendint();
 	    if (response.length == 1) {
-		System.out.println("Robot Servo cannot get response!"+"\nYou should check your connection with robot or contact the mechanics or YW Chen.\n\n");
+		System.out.println("Robot Servo cannot get response!"
+			+ "\nYou should check your connection with robot or contact the mechanics or YW Chen.\n\n");
 		return false;
 	    }
 	} catch (Exception e) {
