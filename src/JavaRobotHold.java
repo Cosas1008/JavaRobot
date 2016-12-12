@@ -1,4 +1,7 @@
-
+/*
+ * Modified on Dec. 13, 2016 by Y.W. Chen
+ * right reserved by RFVLSI NCTU
+ */
 public class JavaRobotHold extends SendUDP {
 
 	private static Boolean status = new Boolean(false);

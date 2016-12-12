@@ -1,7 +1,12 @@
+/*
+ * Modified on Dec. 13, 2016 by Y.W. Chen
+ * right reserved by RFVLSI NCTU
+ */
 import java.io.IOException;
 
 public class JavaRobot extends SendUDP {
-	private Boolean botReady = false;
+	private boolean botReady = false;
+	private boolean initial = false;
 	private RobotAngle targetAngle;
 	private RobotPosition targetPosition;
 	private RobotAngle currentAngle;
@@ -25,6 +30,10 @@ public class JavaRobot extends SendUDP {
 	 * length == 6 : X/Y/Z/yaw/pitch/speed
 	 */
 	public void moveTo(int... anglespeedposition) {
+		if(!(this.initial)){
+			System.out.println("Please initialize the JavaRobot first");
+			return;
+		}
 		this.setReady(false);
 		if (anglespeedposition.length == 0) { // Move to tool
 			this.targetPosition = null;
@@ -108,7 +117,7 @@ public class JavaRobot extends SendUDP {
 			System.out.println("Yaw is " + this.tool[5]);
 			System.out.println("Pitch is " + this.tool[6]);
 			System.out.println("Zr is " + this.tool[7]);
-			System.out.println("Did get the tool.");
+			this.initial = true;
 		}
 	}
 
@@ -128,16 +137,16 @@ public class JavaRobot extends SendUDP {
 			this.currentPosition = new RobotPosition(9999, 9999, 9999);	//prevent the error code
 			this.currentAngle = new RobotAngle(9999, 9999); // prevent the error
 															// code
-		} else {
-			displacement[0] = toolnow[2] - this.targetPosition.getPosition()[0]; // X
+		} else {	//Target - Current
+			displacement[0] = this.targetPosition.getPosition()[0] - toolnow[2]; // X
 			// displacement
-			displacement[1] = toolnow[3] - this.targetPosition.getPosition()[1]; // Y
+			displacement[1] = this.targetPosition.getPosition()[1] - toolnow[3] ; // Y
 			// displacement
-			displacement[2] = toolnow[4] - this.targetPosition.getPosition()[2]; // Z
+			displacement[2] = this.targetPosition.getPosition()[2] - toolnow[4]; // Z
 			// displacement
-			displacement[3] = toolnow[5] - this.targetAngle.getTheta(); // Yaw
+			displacement[3] = this.targetAngle.getTheta() - toolnow[5]; // Yaw
 			// displacement
-			displacement[4] = toolnow[6] - this.targetAngle.getPhi(); // Pitch
+			displacement[4] = this.targetAngle.getPhi() - toolnow[6]; // Pitch
 			// displacement
 			this.currentPosition = new RobotPosition(displacement[0], displacement[1], displacement[2]);
 			this.currentAngle = new RobotAngle(displacement[3], displacement[4]);
@@ -160,6 +169,10 @@ public class JavaRobot extends SendUDP {
 		}).start();
 	}
 	public boolean isCloseTo() {
+		if(!(this.initial)){
+			System.out.println("Please initialize the JavaRobot first");
+			return false;
+		}
 		if (currentPosition.getPosition()[0] == 9999 && currentPosition.getPosition()[1] == 9999
 				&& currentPosition.getPosition()[2] == 9999) {
 			return (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100)						// Yaw
@@ -173,6 +186,12 @@ public class JavaRobot extends SendUDP {
 		}
 	}
 
+	public void initialize(){
+		setInitial();
+		if(!(this.initial)){
+			System.out.println("Initialize failed!");
+		}
+	}
 	// Inner class of Tool store information
 	class Tool {
 		private int toolnumber;

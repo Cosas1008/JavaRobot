@@ -32,7 +32,7 @@ public class JavaRobotExample {
 			jr.moveTo();
 			jr.moveTo(speed);
 			jr.moveTo(123, 123);
-			
+			jr.askAngle();
 			tool = jr.read();
 			System.out.println("Tool is" + tool.toString());
 		}

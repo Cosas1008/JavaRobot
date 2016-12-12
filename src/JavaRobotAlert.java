@@ -1,3 +1,7 @@
+/*
+ * Modified on Dec. 13, 2016 by Y.W. Chen
+ * right reserved by RFVLSI NCTU
+ */
 import java.io.UnsupportedEncodingException;
 
 public class JavaRobotAlert extends SendUDP {

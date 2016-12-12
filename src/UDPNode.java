@@ -1,10 +1,13 @@
+/*
+ * Modified on Dec. 13, 2016 by Y.W. Chen
+ * right reserved by RFVLSI NCTU
+ */
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 
 public class UDPNode {
     String host = "192.168.1.134"; // Robot IPAddress
