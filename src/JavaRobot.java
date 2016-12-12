@@ -7,33 +7,52 @@ public class JavaRobot extends SendUDP {
 	private RobotAngle currentAngle;
 	private RobotPosition currentPosition;
 	private int[] tool = new int[8];
-	private int speed = 1000;
+	private int speed = 100;		//default 100
 
 	// Constructor with no value
 	public JavaRobot() {
 		this.setInitial();
-		this.setReady(false);
+		this.setReady(true);	//Ready to send command
 	}
 
 	/*
-	 * Move to function length == 2 : yaw/pitch length == 3 : yaw/pitch/speed
-	 * length == 5 : X/Y/Z/yaw/pitch length == 6 : X/Y/Z/yaw/pitch/speed
+	 * Move to function 
+	 * length == 0 : (move to tool)
+	 * length == 1 : speed(move to tool) 
+	 * length == 2 : yaw/pitch 
+	 * length == 3 : yaw/pitch/speed
+	 * length == 5 : X/Y/Z/yaw/pitch 
+	 * length == 6 : X/Y/Z/yaw/pitch/speed
 	 */
 	public void moveTo(int... anglespeedposition) {
 		this.setReady(false);
-		if (anglespeedposition.length == 2) {
+		if (anglespeedposition.length == 0) { // Move to tool
+			this.targetPosition = null;
+			this.targetAngle = null;
+		} else if (anglespeedposition.length == 1) { // Move to tool with speed
+			this.targetPosition = null;
+			this.targetAngle = null;
+			this.speed = anglespeedposition[0];
+		} else if (anglespeedposition.length == 2) { // Move yaw and pitch
 			this.targetAngle = new RobotAngle(anglespeedposition[0], anglespeedposition[1]);
-		} else if (anglespeedposition.length == 3) {
+		} else if (anglespeedposition.length == 3) { // Move yaw and pitch with
+														// speed
+			this.targetAngle = new RobotAngle(anglespeedposition[0], anglespeedposition[1]);
 			this.speed = anglespeedposition[3];
-		} else if (anglespeedposition.length == 5) {
+		} else if (anglespeedposition.length == 5) { // Move X, Y, Z, yaw and
+														// pitch
 			this.targetPosition = new RobotPosition(anglespeedposition[0], anglespeedposition[1],
 					anglespeedposition[2]);
 			this.targetAngle = new RobotAngle(anglespeedposition[3], anglespeedposition[4]);
-		} else if (anglespeedposition.length == 6) {
+		} else if (anglespeedposition.length == 6) { // Move X, Y, Z, yaw and
+														// pitch with speed
 			this.targetPosition = new RobotPosition(anglespeedposition[0], anglespeedposition[1],
 					anglespeedposition[2]);
 			this.targetAngle = new RobotAngle(anglespeedposition[3], anglespeedposition[4]);
 			this.speed = anglespeedposition[5];
+		} else {
+			System.out.println("You didn't enter the right arguments.");
+			return;
 		}
 		int count = 0;
 		try {
@@ -41,16 +60,18 @@ public class JavaRobot extends SendUDP {
 				setReady(robotReady());
 				if (this.targetPosition != null && this.tool != null) {
 					RobotMove rm = new RobotMove(targetPosition.getPosition()[0], targetPosition.getPosition()[1],
-							targetPosition.getPosition()[2], targetAngle.getPhi(), targetAngle.getTheta(), this.tool,
-							speed);
+							targetPosition.getPosition()[2], targetAngle.getTheta(), targetAngle.getPhi(), this.tool,
+							this.speed);
 					rm.move();
-				} else if (this.targetPosition == null && this.tool != null) {
-					RobotMove rm = new RobotMove(targetAngle.getTheta(), targetAngle.getPhi(), this.tool, speed);
+				} else if (this.targetPosition == null && this.targetAngle != null && this.tool != null) {
+					RobotMove rm = new RobotMove(targetAngle.getTheta(), targetAngle.getPhi(), this.tool, this.speed);
+					rm.move();
+				} else if(this.targetPosition == null && this.targetAngle == null && this.tool != null){
+					RobotMove rm = new RobotMove(this.tool, this.speed);
 					rm.move();
 				} else {
 					setReady(true);
-					System.out.println(
-							"We cannot get the tool information from Robot, please check the connection or contact Y.W. Chen");
+					System.out.println("We cannot get the tool information from Robot, please check the connection or contact Y.W. Chen");
 					break;
 				}
 				Thread.sleep(100);// pause
@@ -73,7 +94,7 @@ public class JavaRobot extends SendUDP {
 		this.botReady = input;
 	}
 
-	// initialize boolean function
+	// initialize JavaRobot with reading the tool(original position) first.
 	private void setInitial() {
 		this.tool = read();
 		if (this.tool == null) {
@@ -87,24 +108,26 @@ public class JavaRobot extends SendUDP {
 			System.out.println("Yaw is " + this.tool[5]);
 			System.out.println("Pitch is " + this.tool[6]);
 			System.out.println("Zr is " + this.tool[7]);
+			System.out.println("Did get the tool.");
 		}
 	}
 
-	private boolean getReady() {
+	public boolean getReady() {
 		return botReady;
 	}
 
 	private boolean robotReady() {
-		robotDisplacement();
-		return isCloseTo();
+		robotDisplacement();		//function to calculate the difference between target and current
+		return isCloseTo();			//return the boolean value of previous description
 	}
 
 	public void robotDisplacement() {
 		int[] displacement = new int[6];
 		int[] toolnow = read();
 		if (toolnow == null) {
-			this.currentPosition = new RobotPosition(9999, 9999, 9999);
-			this.currentAngle = new RobotAngle(9999, 9999);
+			this.currentPosition = new RobotPosition(9999, 9999, 9999);	//prevent the error code
+			this.currentAngle = new RobotAngle(9999, 9999); // prevent the error
+															// code
 		} else {
 			displacement[0] = toolnow[2] - this.targetPosition.getPosition()[0]; // X
 			// displacement
@@ -112,9 +135,9 @@ public class JavaRobot extends SendUDP {
 			// displacement
 			displacement[2] = toolnow[4] - this.targetPosition.getPosition()[2]; // Z
 			// displacement
-			displacement[3] = toolnow[5] - this.targetAngle.getPhi(); // Yaw
+			displacement[3] = toolnow[5] - this.targetAngle.getTheta(); // Yaw
 			// displacement
-			displacement[4] = toolnow[6] - this.targetAngle.getTheta(); // Pitch
+			displacement[4] = toolnow[6] - this.targetAngle.getPhi(); // Pitch
 			// displacement
 			this.currentPosition = new RobotPosition(displacement[0], displacement[1], displacement[2]);
 			this.currentAngle = new RobotAngle(displacement[3], displacement[4]);
@@ -127,17 +150,26 @@ public class JavaRobot extends SendUDP {
 		return toolout;
 	}
 
-	public Boolean isCloseTo() {
+	public void askAngle(){
+		new Thread(new Runnable(){
+			@Override
+			public void run(){
+				
+			}
+		
+		}).start();
+	}
+	public boolean isCloseTo() {
 		if (currentPosition.getPosition()[0] == 9999 && currentPosition.getPosition()[1] == 9999
 				&& currentPosition.getPosition()[2] == 9999) {
-			return (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100)
-					&& (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100);
+			return (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100)						// Yaw
+					&& (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100);						// Pitch
 		} else {
-			return (Math.abs(currentPosition.getPosition()[0] - targetPosition.getPosition()[0]) < 10)
-					&& (Math.abs(currentPosition.getPosition()[1] - targetPosition.getPosition()[1]) < 10)
-					&& (Math.abs(currentPosition.getPosition()[2] - targetPosition.getPosition()[2]) < 10)
-					&& (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100)
-					&& (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100);
+			return (Math.abs(currentPosition.getPosition()[0] - targetPosition.getPosition()[0]) < 10)		//X
+					&& (Math.abs(currentPosition.getPosition()[1] - targetPosition.getPosition()[1]) < 10)	//Y
+					&& (Math.abs(currentPosition.getPosition()[2] - targetPosition.getPosition()[2]) < 10)	//Z
+					&& (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100)					// Yaw
+					&& (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100);						//Pitch
 		}
 	}
 
@@ -281,18 +313,21 @@ public class JavaRobot extends SendUDP {
 	}
 
 	public static void servoOn() {
-		JavaRobotServo serbo = new JavaRobotServo(1);// Servo ON
-		serbo.makeServo(1);
-		Boolean sevo = serbo.makeServo(1);
+		Boolean sevo = JavaRobotServo.makeServo(1);// Servo ON
 		if (sevo) {
 			System.out.println("Servo Start!");
 		}
 	}
 
+	public static void servoOff() {
+		Boolean sevo = JavaRobotServo.makeServo(2);// Servo OFF
+		if (sevo) {
+			System.out.println("Servo Stop!");
+		}
+	}
+
 	public Boolean servo(int i) {
-		JavaRobotServo serbo = new JavaRobotServo(i);// 1 : Servo ON / 2: Servo
-		// OFF
-		Boolean sevo = serbo.makeServo(1);
+		Boolean sevo = JavaRobotServo.makeServo(i);// 1 : Servo ON / 2: Servo OFF
 		if (sevo && i == 1) {
 			System.out.println("Servo Start!");
 		} else if (!(sevo) && i == 2) {
@@ -304,29 +339,31 @@ public class JavaRobot extends SendUDP {
 	}
 
 	public Boolean alert(int i) {
-		JavaRobotAlert robotAlert = new JavaRobotAlert(i);// 1 : Read Alert / 2
-		// : Reset Alert
-		String alert = robotAlert.makeAlert(i);
+		String alert = JavaRobotAlert.makeAlert(i);// 1 : Read Alert / 2 : Reset Alert
 		Boolean returnBoolean = new Boolean(true);
 		if ((!"".equals(alert))) {
 			returnBoolean = true;// Not any Alert happened
 		} else {
-			returnBoolean = false;
+			returnBoolean = false;// There are Alert happened
 		}
 		return returnBoolean;
 	}
 
 	public static void holdOn() {
-		JavaRobotHold hold = new JavaRobotHold(1);// 1 : Hold ON / 2 : Hold OFF
-		Boolean holdd = hold.makeHold(1);
-		if (holdd) {
+		Boolean hold = JavaRobotHold.makeHold(1);// 1 : Hold ON 
+		if (hold) {
 			System.out.println("Hold ON! Yoo-hoo-hoo!");
+		}
+	}
+	public static void holdOff() {
+		Boolean hold = JavaRobotHold.makeHold(2);// 2 : Hold OFF
+		if (hold) {
+			System.out.println("Hold OFF!");
 		}
 	}
 
 	public Boolean hold(int i) {
-		JavaRobotHold hold = new JavaRobotHold(i);// 1 : Hold ON / 2 : Hold OFF
-		Boolean sevo = hold.makeHold(i);
+		Boolean sevo = JavaRobotHold.makeHold(i);// 1 : Hold ON / 2 : Hold OFF
 		if (sevo && i == 1) {
 			System.out.println("Hold ON! Yoo-hoo-hoo!");
 		} else if (!(sevo) && i == 2) {

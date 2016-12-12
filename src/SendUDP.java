@@ -44,35 +44,35 @@ public abstract class SendUDP extends Thread {
 		switch (index) {
 		case 1:
 			this.command = readPositionCommand;
-			System.out.println("Read Position command set!");
+			//System.out.println("Read Position command set!");
 			break;
 		case 2:
 			this.command = commandAlertRead;
-			System.out.println("Read Alert command set!");
+			//System.out.println("Read Alert command set!");
 			break;
 		case 3:
 			this.command = commandAlertReset;
-			System.out.println("Reset Alert command set!");
+			//System.out.println("Reset Alert command set!");
 			break;
 		case 4:
 			this.command = commandServoOn;
-			System.out.println("Servo ON command set!");
+			//System.out.println("Servo ON command set!");
 			break;
 		case 5:
 			this.command = commandServoOFF;
-			System.out.println("Servo OFF command set!");
+			//System.out.println("Servo OFF command set!");
 			break;
 		case 6:
 			this.command = commandHoldOn;
-			System.out.println("Hold ON command set!");
+			//System.out.println("Hold ON command set!");
 			break;
 		case 7:
 			this.command = commandHoldOff;
-			System.out.println("Hold OFF command set!");
+			//System.out.println("Hold OFF command set!");
 			break;
 		default:
 			this.command = readInt;
-			System.out.println("Read Position command set!");
+			//System.out.println("Read Position command set!");
 			break;
 		}
 

@@ -1,5 +1,5 @@
 /*
- * Modified on November 29th, 2016
+ * Modified on December 13th, 2016
  * 
  * Attention
  * 
@@ -28,7 +28,7 @@ public class RobotReadPosition extends SendUDP {
 	// Read will send command and return tool form data
 	public int[] read() {
 		int[] response = new int[8];
-		System.out.println("Called");
+		//System.out.println("Read");
 		RobotReadPosition robotread = new RobotReadPosition();
 		try {
 			response = robotread.sendint();

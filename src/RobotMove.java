@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class RobotMove extends SendUDP{
 
-	private boolean isYaw = false;
+	private boolean isPitch = false;
 	private static final byte[] head = { 89, 69, 82, 67, 32, 00, 104, 00, 03, 01, 00, 00, 00, 00, 00, 00, 57, 57, 57,
 			57, 57, 57, 57, 57 };// Header part
 	private static final byte[] suh = { -118, -16, -16, 0, -16, 2, 0, 0 };// Sub-header
@@ -16,12 +16,6 @@ public class RobotMove extends SendUDP{
 	private byte[] setting_ang = { 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 25 };
 	// Setting of Speed to 1 degree/s and Cartesian coordinate(19)
 	private Integer speed = new Integer(0);// Speed = speed * 10 unit
-	private Integer x = new Integer(0);
-	private Integer y = new Integer(0);
-	private Integer z = new Integer(0);
-	private Integer yaw = new Integer(0);
-	private Integer pitch = new Integer(0);
-	private Integer zr = new Integer(0);
 	private byte[] Reserv = { 0, 0, 0, 0 };
 	private Integer toolNumber = new Integer(0);
 	private Integer typeNumber = new Integer(0);
@@ -31,6 +25,7 @@ public class RobotMove extends SendUDP{
 	private int[] coordinate = new int[3];
 	private int[] angle = new int[3];
 	private int[] tool = new int[8];
+	private int[] displacement = new int[8];
 	private byte[] speedbyte;
 	private byte[] toolNumberbyte;
 	private byte[] typeNumberbyte;
@@ -40,31 +35,51 @@ public class RobotMove extends SendUDP{
 	private boolean isDone = false;
 
 	// constructor of assigning X, Y, Z, and angle values
-	public RobotMove(int xin, int yin, int zin, int theta, int phi, int[] tool, int speedin) {
+	public RobotMove(int xtar, int ytar, int ztar, int phitar, int thetatar, int[] tool, int speedin) {
 		// Basic setting
 		this.tool = tool;
 		this.toolNumber = tool[0];
 		this.typeNumber = tool[1];
-		this.x = tool[2];
-		this.y = tool[3];
-		this.z = tool[4];
-		this.yaw = tool[5];
-		this.pitch = tool[6];
-		this.zr = tool[7];
-		// Assigning X,Y,Z,Tx,Ty,Tz
+		// Assigning difference of coordinate and angle
 		for (int i = 0; i < 3; i++) {
 			switch (i) {
 			case 1:
-				this.coordinate[i] = this.x - xin;
-				this.angle[i] = this.yaw - theta;
+				this.coordinate[i] = xtar - tool[2];
+				this.angle[i] = phitar - tool[6];		//pitch
 				break;
 			case 2:
-				this.coordinate[i] = this.y - yin;
-				this.angle[i] = this.pitch - phi;
+				this.coordinate[i] = ytar - tool[3];
+				this.angle[i] = thetatar - tool[5];		//yaw
 				break;
 			case 3:
-				this.coordinate[i] = this.z - zin;
-				this.angle[i] = this.zr;
+				this.coordinate[i] = ztar - tool[4];
+				this.angle[i] = 0;
+				break;
+			}
+		}
+		initialize(speedin);
+	}
+
+	// constructor of simply move theta and phi
+	public RobotMove(int phitar, int thetatar, int[] tool, int speedin) {
+		// Basic setting
+		this.tool = tool;
+		this.toolNumber = tool[0];
+		this.typeNumber = tool[1];
+		// Assigning difference of coordinate and angle
+		for (int i = 0; i < 3; i++) {
+			switch (i) {
+			case 1:
+				this.coordinate[i] = 0;
+				this.angle[i] = phitar - tool[6];		//pitch
+				break;
+			case 2:
+				this.coordinate[i] = 0;
+				this.angle[i] = thetatar - tool[5];		//yaw
+				break;
+			case 3:
+				this.coordinate[i] = 0;
+				this.angle[i] = 0;
 				break;
 			}
 		}
@@ -77,75 +92,25 @@ public class RobotMove extends SendUDP{
 		this.tool = tool;
 		this.toolNumber = tool[0];
 		this.typeNumber = tool[1];
-		this.x = tool[2];
-		this.y = tool[3];
-		this.z = tool[4];
-		this.zr = tool[7];
-		this.yaw = tool[5];
-		this.pitch = tool[6];
-		this.zr = tool[7];
-		// Assigning X,Y,Z,Tx,Ty,Tz
+		// Assigning difference of coordinate and angle
 		for (int i = 0; i < 3; i++) {
-			switch (i) {
-			case 1:
-				this.coordinate[i] = this.x;
-				this.angle[i] = this.yaw;
-				break;
-			case 2:
-				this.coordinate[i] = this.y;
-				this.angle[i] = this.pitch;
-				break;
-			case 3:
-				this.coordinate[i] = this.z;
-				this.angle[i] = this.zr;
-				break;
-			}
+			this.coordinate[i] = 0;
+			this.angle[i] = 0;
 		}
 		initialize(speedin);
 	}
-
-	// constructor of simply move theta and phi
-	public RobotMove(int theta, int phi, int[] tool, int speedin) {
-		// Basic setting
-		this.tool = tool;
-		this.toolNumber = tool[0];
-		this.typeNumber = tool[1];
-		this.x = tool[2];
-		this.y = tool[3];
-		this.z = tool[4];
-		this.yaw = tool[5];
-		this.pitch = tool[6];
-		this.zr = tool[7];
-		for (int i = 0; i < 3; i++) {
-			switch (i) {
-			case 0:
-				this.coordinate[i] = this.x;
-				this.angle[i] = this.yaw - theta;
-				break;
-			case 1:
-				this.coordinate[i] = this.y;
-				this.angle[i] = this.pitch - phi;
-				break;
-			case 2:
-				this.coordinate[i] = this.z;
-				this.angle[i] = this.zr;
-				break;
-			}
-		}
-		initialize(speedin);
-	}
-
+	
 	// inner constructor to send command
 	private RobotMove(byte[] generatedCommand) {
 		super(generatedCommand); // Assign Command to SendUDP
 	}
 
-	// methods to get coordinate
+	// method to get coordinate
 	public int[] getCoordinate() {
 		return this.coordinate;
 	}
 
-	// methods to get angle
+	// method to get angle
 	public int[] getAngle() {
 		return this.angle;
 	}
@@ -155,26 +120,65 @@ public class RobotMove extends SendUDP{
 		return this.tool;
 	}
 
-	public Boolean isDone() {
-		RobotMove robot = new RobotMove(newCommand);
-		try {
-			robot.sendint();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+	public boolean isDone() {
+		int[] diffPosition = robotDisplacement();
+		boolean rec = isDoneRec(diffPosition);
+		boolean ang = isDoneAng(diffPosition);
+		if (rec && ang) {
+			setDone(true);
+		} else {
+			setDone(false);
 		}
+
 		return this.isDone;
 	}
 
-	public int[] robotDisplacement() {
-		int[] displacement = new int[6];
-		RobotReadPosition tg = new RobotReadPosition();
-		int[] toolnow = tg.read();
-		for (int j = 0; j < 6; j++) {
-			displacement[j] = toolnow[j + 2];
+	public boolean isDoneRec(int[] diffPosition) {
+		boolean outBool = false;
+		for (int i = 2; i < 5; i++) {
+			// Assign difference of coordinate and angle
+			this.coordinate[i - 2] = diffPosition[i];
+			// Return the boolean value
+			if (Math.abs(diffPosition[i]) >= 100) {
+				return false;
+			} else {
+				outBool = true;
+			}
 		}
-		return displacement;
+		return outBool;
+	}
+
+	public boolean isDoneAng(int[] diffPosition) {
+		boolean outBool = false;
+		for (int i = 5; i < 8; i++) {
+			// Assign difference of coordinate and angle
+			this.angle[i - 5] = diffPosition[i];
+			// Return the boolean value
+			if (Math.abs(diffPosition[i]) >= 100) {
+				return false;
+			} else {
+				outBool = true;
+			}
+		}
+		return outBool;
+	}
+
+	public int[] robotDisplacement() {
+		int[] toolnow = read();
+		for (int j = 2; j < 5; j++) {
+			this.displacement[j] = (toolnow[j] - tool[j]) / 1000;
+		}
+		for (int k = 5; k < 8; k++) {
+			this.displacement[k] = (toolnow[k] - tool[k]) / 100;
+		}
+
+		return this.displacement;
+	}
+
+	public int[] read() {
+		RobotReadPosition robotread = new RobotReadPosition();
+		int[] toolout = robotread.read(); // To store the outcome of Tool
+		return toolout;
 	}
 
 	// move function(main function)
@@ -186,18 +190,18 @@ public class RobotMove extends SendUDP{
 		System.out.printf("Coordinate is  X : %d  Y : %d  Z : %d Tz : %d Ty : %d Tz : %d \n\n", this.coordinate[0],
 				this.coordinate[1], this.coordinate[2], this.angle[0], this.angle[1], this.angle[2]);
 		// To tell whether to move coordinate and move robot to the place first
-		if (this.x == this.tool[2] && this.y == this.tool[3] && this.z == this.tool[z]) {
-			while (!(isDone())) {
+		if (this.coordinate[0] >= 100 || this.coordinate[1] >= 100 || this.coordinate[2] >= 100) {
+			while (!(isDoneRec(this.displacement))) {
 				moveRect();// Move to the position first
 			}
-		} else {
-			while (!(isDone())) {
+		} else if (this.angle[0] >= 100 || this.angle[1] >= 100 || this.angle[2] >= 100) {
+			while (!(isDoneAng(this.displacement))) {
 				movePitch(0); // Set Pitch to 0 first
 			}
-			while (!(isDone())) {
+			while (!(isDoneAng(this.displacement))) {
 				moveYaw(this.angle[0]); // Yaw set to assigned value
 			}
-			while (!(isDone())) {
+			while (!(isDoneAng(this.displacement))) {
 				movePitch(this.angle[1]); // Pitch set to assigned value
 			}
 		}
@@ -212,31 +216,67 @@ public class RobotMove extends SendUDP{
 		coordinatemodified[2] = this.coordinate[2];
 		this.anglebyte = InttoByteArray(anglemodified);
 		this.coordinatebyte = InttoByteArray(coordinatemodified);
-		this.newCommand = generateCommand(isYaw);
+		this.newCommand = generateCommand();
+		RobotMove robot = new RobotMove(this.newCommand);
+		try {
+			robot.sendint();
+			Thread.sleep(5);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			System.out.println("isDone in RobotMove Thread being interrupted");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void moveYaw(int yaw) {
-		this.isYaw = true; // Move Yaw
-		int[] anglemodified = new int[3];
+		this.isPitch = false; // Move Yaw
 		int[] coordinatemodified = { 0, 0, 0 };
-		anglemodified[0] = yaw;
+		int[] anglemodified = new int[3];
+		anglemodified[0] = 0;
+		anglemodified[1] = yaw;
+		anglemodified[2] = 0;
+		this.anglebyte = InttoByteArray(anglemodified);
+		this.coordinatebyte = InttoByteArray(coordinatemodified);
+		this.newCommand = generateCommand(isPitch);
+		RobotMove robot = new RobotMove(this.newCommand);
+		try {
+			robot.sendint();
+			Thread.sleep(5);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			System.out.println("isDone in RobotMove Thread being interrupted");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void movePitch(int pitch) {
+		this.isPitch = false; // Move pitch
+		int[] coordinatemodified = { 0, 0, 0 };
+		int[] anglemodified = new int[3];
+		anglemodified[0] = pitch;
 		anglemodified[1] = 0;
 		anglemodified[2] = 0;
 		this.anglebyte = InttoByteArray(anglemodified);
 		this.coordinatebyte = InttoByteArray(coordinatemodified);
-		this.newCommand = generateCommand(isYaw);
-	}
-
-	private void movePitch(int pitch) {
-		this.isYaw = false; // Move pitch
-		int[] anglemodified = new int[3];
-		int[] coordinatemodified = { 0, 0, 0 };
-		anglemodified[0] = 0;
-		anglemodified[1] = pitch;
-		anglemodified[2] = 0;
-		this.anglebyte = InttoByteArray(anglemodified);
-		this.coordinatebyte = InttoByteArray(coordinatemodified);
-		this.newCommand = generateCommand(isYaw);
+		this.newCommand = generateCommand(isPitch);
+		RobotMove robot = new RobotMove(this.newCommand);
+		try {
+			robot.sendint();
+			Thread.sleep(5);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			System.out.println("isDone in RobotMove Thread being interrupted");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private byte[] generateCommand(boolean... argument) {
@@ -260,7 +300,7 @@ public class RobotMove extends SendUDP{
 			for (int i = 0; i < speedbyte.length; i++)
 				arraylist.add((39 + i), speedbyte[i]);
 		} else if (argument.length == 1) {
-			this.isYaw = argument[0];
+			this.isPitch = argument[0];//Not useful for now
 			for (byte i : setting_ang)
 				arraylist.add(i);
 			for (int i = 0; i < speedbyte.length; i++)
@@ -312,7 +352,13 @@ public class RobotMove extends SendUDP{
 		}
 	}
 
+	private void setDone(boolean in) {
+		this.isDone = in;
+	}
+	
+	//This function is to assign the Byte[] to each type of parameter which required in generate command
 	private void initialize(int speedin) {
+		isDone();
 		this.speed = speedin;
 		this.speedbyte = InttoByteArrayS(speed);
 		this.toolNumberbyte = InttoByteArrayS(toolNumber);
