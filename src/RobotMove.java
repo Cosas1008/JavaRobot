@@ -37,7 +37,7 @@ public class RobotMove extends SendUDP{
     private byte[] coordinatebyte;
     private byte[] anglebyte;
     private byte[] coorbyte;
-
+    private boolean isDone = false;
     // constructor of assigning X, Y, Z, and angle values
     public RobotMove(int xin, int yin, int zin, int theta, int phi, int[] tool, int speedin) {
 	// Basic setting
@@ -155,19 +155,26 @@ public class RobotMove extends SendUDP{
     }
 
     public Boolean isDone() {
-	Boolean outBoolean = new Boolean(false);
 	RobotMove robot = new RobotMove(newCommand);
 	try {
 	    robot.sendint();
 	} catch (IOException e) {
 	    e.printStackTrace();
 	} catch (Exception e) {
-	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
-	return outBoolean;
+	return this.isDone;
     }
-
+    
+    public int[] robotDisplacement(){
+	int[] displacement = new int[6];
+	RobotReadPosition tg = new RobotReadPosition();
+	int[] toolnow = tg.read();
+	for(int j =0; j <6 ; j++){
+	    displacement[j] = toolnow[j+2];   
+	}	
+	return displacement;
+    }
     // move function(main function)
     public void move() throws Exception {
 	// Check whether there are placement first. If there are changes in

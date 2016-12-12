@@ -19,6 +19,17 @@ public class JavaRobotExample {
 	JavaRobot jr = new JavaRobot();
 	//jr.servo(1);
 	tool = jr.read();
-	
+	/*
+	 * Move to function 
+	 * length == 2 : 
+	 * yaw/pitch 
+	 * length == 3 :
+	 * yaw/pitch/speed 
+	 * length == 5 : 
+	 * X/Y/Z/yaw/pitch 
+	 * length == 6 :
+	 * X/Y/Z/yaw/pitch/speed
+	 */
+	jr.moveTo(123, 123);
     }
 }
