@@ -191,14 +191,15 @@ public class RobotMove extends SendUDP{
 		// placement, the function will stop after change the
 		// placement rather than move angular, you would have to call the
 		// function again.
-		System.out.printf("Coordinate is  X : %d  Y : %d  Z : %d Tz : %d Ty : %d Tz : %d \n\n", this.coordinate[0],
-				this.coordinate[1], this.coordinate[2], this.angle[0], this.angle[1], this.angle[2]);
+		System.out.print("Remaining Displacement ");
 		// To tell whether to move coordinate and move robot to the place first
 		if (this.coordinate[0] >= 100 || this.coordinate[1] >= 100 || this.coordinate[2] >= 100) {
+		    System.out.printf(" X : %d  Y : %d  Z : %d ", this.coordinate[0], this.coordinate[1], this.coordinate[2]);
 			while (!(isDoneRec(this.displacement))) {
 				moveRect();// Move to the position first
 			}
 		} else if (this.angle[0] >= 100 || this.angle[1] >= 100 || this.angle[2] >= 100) {
+		    System.out.printf(" AngularTz : %d Ty : %d \n ", this.angle[0], this.angle[1]);
 			while (!(isDoneAng(this.displacement))) {
 				movePitch(0); // Set Pitch to 0 first
 			}
