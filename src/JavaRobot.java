@@ -81,17 +81,16 @@ public class JavaRobot extends SendUDP {
 	try {
 	    while (!(getReady())) {
 		setReady(robotReady());
-		if (this.targetPosition != null && this.targetAngle != null && this.tool != null) {
+		if (this.targetPosition.getPosition()[0] !=0 && this.targetPosition.getPosition()[1] !=0 && this.targetPosition.getPosition()[2] !=0) {
 		    RobotMove rm = new RobotMove(targetPosition.getPosition()[0], targetPosition.getPosition()[1],
-			    targetPosition.getPosition()[2], targetAngle.getTheta(), targetAngle.getPhi(), this.tool,
-			    this.speed);
+			    targetPosition.getPosition()[2],targetAngle.getPhi(), targetAngle.getTheta(),this.tool, this.speed);
 		    rm.move();
 		    count++;
-		} else if (this.targetPosition == null && this.targetAngle != null && this.tool != null) {
-		    RobotMove rm = new RobotMove(targetAngle.getTheta(), targetAngle.getPhi(), this.tool, this.speed);
+		} else if (this.targetPosition.getPosition()[0] ==0 && this.targetPosition.getPosition()[1] ==0 && this.targetPosition.getPosition()[2] ==0 && this.targetAngle.getTheta() != 0 && this.targetAngle.getPhi() != 0) {
+		    RobotMove rm = new RobotMove(targetAngle.getPhi(),targetAngle.getTheta(), this.tool, this.speed);
 		    rm.move();
 		    count++;
-		} else if (this.targetPosition == null && this.targetAngle == null && this.tool != null) {
+		} else if (this.targetPosition.getPosition()[0] ==0 && this.targetPosition.getPosition()[1] ==0 && this.targetPosition.getPosition()[2] ==0 && this.targetAngle.getTheta() == 0 && this.targetAngle.getPhi() == 0) {
 		    RobotMove rm = new RobotMove(this.tool, this.speed);
 		    rm.move();
 		    count++;
@@ -168,9 +167,9 @@ public class JavaRobot extends SendUDP {
 	    displacement[2] = this.targetPosition.getPosition()[2] - toolnow[4]; // Z
 	    // displacement
 	    } else if (this.targetAngle != null){
-	    displacement[3] = this.targetAngle.getTheta() - toolnow[5]; // Yaw
+	    displacement[3] = this.targetAngle.getPhi() - toolnow[6]; // Pitch
 	    // displacement
-	    displacement[4] = this.targetAngle.getPhi() - toolnow[6]; // Pitch
+	    displacement[4] = this.targetAngle.getTheta() - toolnow[5]; // Yaw
 	    // displacement
 	    displacement[5] = 0;
 	    } else{
@@ -203,8 +202,8 @@ public class JavaRobot extends SendUDP {
 		    System.out.println("No response");
 		    return;
 		} else {
-		    tYaw = response[5] / 100;
-		    tPitch = response[6]/ 100;
+		    tPitch = response[5] / 100;
+		    tYaw = response[6]/ 100;
 		    tZ = response[7] / 100;
 		    // Pitch value
 		    if (Math.abs(tZ) <= Math.abs(tYaw))
@@ -227,7 +226,7 @@ public class JavaRobot extends SendUDP {
 		    } else if (tYaw < 0 && tZ < 0) {
 			yaw = tYaw + tZ + 18000;
 		    }
-		    System.out.println("Pitch is : " +( pitch -	tool[6]) + " and Yaw is : " +( yaw-tool[5]));
+		    System.out.println("Pitch is : " +( pitch -	tool[5]) + " and Yaw is : " +( yaw-tool[6]));
 		}
 	    } catch (NullPointerException e) {
 		throw new IllegalStateException("A response has a null property", e);
@@ -242,14 +241,14 @@ public class JavaRobot extends SendUDP {
 	}
 	if (currentPosition.getPosition()[0] == 9999 && currentPosition.getPosition()[1] == 9999
 		&& currentPosition.getPosition()[2] == 9999) {
-	    return (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100) // Yaw
-		    && (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100); // Pitch
+	    return (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100) 		// Pitch
+		    && (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100); 	// Yaw
 	} else {
 	    return (Math.abs(currentPosition.getPosition()[0] - targetPosition.getPosition()[0]) < 10) // X
 		    && (Math.abs(currentPosition.getPosition()[1] - targetPosition.getPosition()[1]) < 10) // Y
 		    && (Math.abs(currentPosition.getPosition()[2] - targetPosition.getPosition()[2]) < 10) // Z
-		    && (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100) // Yaw
-		    && (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100); // Pitch
+		    && (Math.abs(currentAngle.getPhi() - targetAngle.getPhi()) < 100) 		// Pitch
+		    && (Math.abs(currentAngle.getTheta() - targetAngle.getTheta()) < 100); 	// Yaw
 	}
     }
 
@@ -293,11 +292,11 @@ public class JavaRobot extends SendUDP {
 	    rectAngular.setZ(input);
 	}
 
-	public void settX(int input) {
+	public void setPitch(int input) {
 	    angular.setPhi(input);
 	}
 
-	public void settY(int input) {
+	public void setYaw(int input) {
 	    angular.setTheta(input);
 	}
 
@@ -309,13 +308,13 @@ public class JavaRobot extends SendUDP {
 	public int[] getPosition() {
 	    return rectAngular.getPosition();
 	}
-
-	public int getTheta() {
-	    return angular.getTheta();
-	}
-
+	//Pitch
 	public int getPhi() {
 	    return angular.getPhi();
+	}
+	//Yaw
+	public int getTheta() {
+	    return angular.getTheta();
 	}
 
 	public int getZr() {
@@ -326,35 +325,35 @@ public class JavaRobot extends SendUDP {
     // Inner class of RobotAngle contains yaw and pitch
     class RobotAngle {
 
-	private int theta;
 	private int phi;
+	private int theta;
 
-	public RobotAngle(int theta, int phi) {
-	    this.theta = theta;
+	public RobotAngle(int phi,int theta) {
 	    this.phi = phi;
+	    this.theta = theta;
 	}
 
 	public RobotAngle() {
 	    // Initialize the RobotAngle with (0,0)
-	    this.theta = 0;
 	    this.phi = 0;
+	    this.theta = 0;
 	}
 
 	// basic void function set and get angle
-	public void setTheta(int angle) {
-	    this.theta = angle;
-	}
-
 	public void setPhi(int angle) {
-	    this.phi = angle;
+	    this.phi = angle;		//Pitch
 	}
-
-	public int getTheta() {
-	    return this.theta;
+	
+	public void setTheta(int angle) {
+	    this.theta = angle;		//Yaw
 	}
 
 	public int getPhi() {
-	    return this.phi;
+	    return this.phi;		//Pitch
+	}
+	
+	public int getTheta() {
+	    return this.theta;		//Yaw
 	}
 
     }

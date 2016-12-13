@@ -54,9 +54,9 @@ public class RobotReadPosition extends SendUDP {
 					case 15:
 						this.tool[4] = response[i]; // Z
 					case 16:
-						this.tool[5] = response[i]; // yaw
+						this.tool[5] = response[i]; // pitch
 					case 17:
-						this.tool[6] = response[i]; // pitch
+						this.tool[6] = response[i]; // yaw
 					case 18:
 						this.tool[7] = response[i]; // Zr
 					}

@@ -47,16 +47,16 @@ public class RobotMove extends SendUDP{
 		// Assigning difference of coordinate and angle
 		for (int i = 0; i < 3; i++) {
 			switch (i) {
+			case 0:
+				this.coordinate[i] = xtar*1000;
+				this.angle[i] = phitar*100;		//pitch
+				break;
 			case 1:
-				this.coordinate[i] = xtar - tool[2];
-				this.angle[i] = phitar - tool[6];		//pitch
+				this.coordinate[i] = ytar*1000;
+				this.angle[i] = thetatar*100;		//yaw
 				break;
 			case 2:
-				this.coordinate[i] = ytar - tool[3];
-				this.angle[i] = thetatar - tool[5];		//yaw
-				break;
-			case 3:
-				this.coordinate[i] = ztar - tool[4];
+				this.coordinate[i] = ztar*1000;
 				this.angle[i] = 0;
 				break;
 			}
@@ -73,15 +73,15 @@ public class RobotMove extends SendUDP{
 		// Assigning difference of coordinate and angle
 		for (int i = 0; i < 3; i++) {
 			switch (i) {
+			case 0:
+				this.coordinate[i] = 0;
+				this.angle[i] = phitar*100;		//pitch in 0.01 degree
+				break;
 			case 1:
 				this.coordinate[i] = 0;
-				this.angle[i] = phitar - tool[6];		//pitch
+				this.angle[i] = thetatar*100;		//yaw in 0.01 degree
 				break;
 			case 2:
-				this.coordinate[i] = 0;
-				this.angle[i] = thetatar - tool[5];		//yaw
-				break;
-			case 3:
 				this.coordinate[i] = 0;
 				this.angle[i] = 0;
 				break;
