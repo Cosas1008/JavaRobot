@@ -103,7 +103,6 @@ public class RobotReadPosition extends SendUDP {
 				yawDifference = this.tool[5] - response[16]; // yaw
 				pitchDifference = this.tool[6] - response[17]; // pitch
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			angle[0] = yawDifference;
