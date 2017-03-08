@@ -1,5 +1,5 @@
 "# JavaRobot" 
-This is the function with can directly send command through UDP to YASKAWA-MH12 Robotic Arm.  
+This is the function which can directly send commands through UDP to YASKAWA-MH12 Robotic Arm.  
 
 There are 3 versions, with only the 3rd is only maintainable, in this repository, feel free to use this for research purpose, all the right reserved 
 This is the final Repository of JavaRobot version 1-3 and the brief Matlab calling code demonstrate here.  
