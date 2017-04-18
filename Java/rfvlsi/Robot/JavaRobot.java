@@ -1,5 +1,5 @@
 /*
- * Modified on Feb 3rd, 2016 by Y.W. Chen
+ * Modified on April 17, 2016 by Y.W. Chen
  * right reserved by RFVLSI NCTU
  */
 package rfvlsi.Robot;
