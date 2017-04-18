@@ -6,6 +6,7 @@ package rfvlsi.Robot;
 
 import rfvlsi.Robot.RobotCommand.CommandMove;
 
+
 public class RobotMoveThread extends Thread {
 
 	private RobotPosition targetPosition;

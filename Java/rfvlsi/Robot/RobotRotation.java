@@ -76,6 +76,51 @@ public class RobotRotation {
 
 	}
 
+	//Matrix transpose
+	public static double[][] transposeMatrix(double[][] a){
+		if (a.length == 0)
+			return null; // invalid dimensions
+		
+		int row = a.length;
+		int col = a[0].length;
+		
+		double[][] answer = new double[col][row];
+		
+		for(int i =0; i < col; i ++){
+			for(int j = 0; j < row; j ++){
+				answer[i][j] = a[j][i];	//simple transpose
+			}
+		}
+		
+		return answer;
+	}
+	
+	// Tell whether the matrix is identical
+	public static boolean isIdenticalMatrix(double[][] a){
+		boolean isIdentical = false;
+		
+		int row = a.length;
+		int col = a[0].length;
+		
+		for(int i =0; i< row; i++){
+			for(int j =0; j < col; j++){
+				isIdentical = (((i == j) && (a[i][j] == 1)) || ((i != j) && (isZero(a[i][j],0.01)))); 	
+				// (if i == j and value == 1 is true) or (if i != j and value == 0)
+				if (isIdentical == false){
+					return false;
+				}
+				//go on
+			}
+		}
+		
+		return isIdentical;
+	}
+	
+	//check whether double is near to 0 
+	public static boolean isZero(double value, double threshold){
+	    return value >= -threshold && value <= threshold;
+	}
+	
 	public static void printMatrix(double[][] inputMatrix) {
 		System.out.println("Matrix[" + inputMatrix.length + "][" + inputMatrix[0].length + "]");
 		int rows = inputMatrix.length;
