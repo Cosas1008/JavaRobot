@@ -1,5 +1,5 @@
 "# JavaRobot" 
-This is the function which can directly send commands through UDP to YASKAWA-MH12 Robotic Arm.  
+This is the function which can directly send commands through UDP to # YASKAWA-MH12 # Robotic Arm, with controller DX200.
 
 There are 3 versions, with only the 3rd is only maintainable, in this repository, feel free to use this for research purpose, all the right reserved 
 This is the final Repository of JavaRobot version 1-3 and the brief Matlab calling code demonstrate here.  
@@ -8,6 +8,16 @@ Initialize a JavaRobot object with JavaRobotRead on matlab, you may get three va
 JavaRobot is the object created in **Java**.  
 Tool store the information you need to move the robot.  
 RefPosRMatrix will output an array 3x3 of rotational matrix.  
+
+#### Update
+JavaRobot_1.1.jar run at jre1.8.0_121 release at 2017 Aug
+JavaRobot_1.3.jar run at jre1.8.0_151 release at 2018 Jan
+
+
+
+##### version release note:
+
+In the end of 2018 will release the ros package with open source Motoplus and ros.industrial support 
 
 ```matlab
 
