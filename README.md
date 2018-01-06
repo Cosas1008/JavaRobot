@@ -10,8 +10,8 @@ Tool store the information you need to move the robot.
 RefPosRMatrix will output an array 3x3 of rotational matrix.  
 
 #### Update
-JavaRobot_1.1.jar run at jre1.8.0_121 release at 2017 Aug
-JavaRobot_1.3.jar run at jre1.8.0_151 release at 2018 Jan
+JavaRobot_1.1.jar run at jre1.8.0_121 release at 2017 Aug  
+JavaRobot_1.3.jar run at jre1.8.0_151 release at 2018 Jan  
 
 
 
