@@ -16,10 +16,10 @@ public class JavaRobotExample {
 			JavaRobot jr = new JavaRobot();
 			JavaRobotRotation jrr = new JavaRobotRotation(jr);
 			// Use case 2: moving
-			double rollin  = 0;
-			double pitchin = 0;
-			double yawin   = 0;
-			int speed = 100;
+			double rollin  = 100;
+			double pitchin = 100;
+			double yawin   = 110;
+			int speed = 200;
 			RobotPosition targetPosition = jrr.generate(rollin, pitchin, yawin);
 			RobotMoveThread mThread = jr.moveTo(targetPosition, speed);
 			mThread.getCurrentPosition();
